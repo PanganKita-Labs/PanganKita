@@ -1,0 +1,18 @@
+﻿#!/usr/bin/env sh
+set -eu
+
+echo "Running PanganKita pre-commit checks..."
+
+staged_dart_files=$(git diff --cached --name-only --diff-filter=ACMR -- '*.dart')
+
+if [ -n "$staged_dart_files" ]; then
+  echo "Formatting staged Dart files..."
+
+  echo "$staged_dart_files" | while IFS= read -r file; do
+    [ -f "$file" ] || continue
+    dart format "$file"
+    git add -- "$file"
+  done
+fi
+
+echo "Pre-commit formatting complete."
