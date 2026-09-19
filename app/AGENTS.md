@@ -72,6 +72,30 @@ API / persistence adapter
 
 Business behavior should remain testable without rendering widgets.
 
+## Flutter architecture
+
+Before making non-trivial structural or cross-file Flutter changes, read
+`../docs/ARCHITECTURE.md`.
+
+That document is the source of truth for:
+
+- feature-first organization;
+- lightweight feature layering;
+- dependency direction;
+- state ownership;
+- repositories and mock implementations;
+- shared vs core boundaries;
+- barrel-file policy;
+- KISS / YAGNI / DRY / SOLID guidance;
+- abstraction thresholds;
+- testing boundaries.
+
+Do not invent a new architecture pattern when the existing architecture
+supports the requirement.
+
+Do not duplicate architecture rules here; keep this file focused on agent
+execution and Flutter-specific quality requirements.
+
 ## File and folder cohesion
 
 A source file should have one primary reason to change.

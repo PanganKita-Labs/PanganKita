@@ -429,3 +429,120 @@ Never claim completion while mandatory acceptance criteria remain unmet.
 
 Do not commit, push, create a PR, merge, delete unrelated code, or rewrite
 history unless the user explicitly requests that action.
+
+## Architecture source of truth
+
+For Flutter source structure, dependency direction, feature boundaries,
+state ownership, repository patterns, barrel-file policy, and architectural
+principles, follow `docs/ARCHITECTURE.md`.
+
+Do not duplicate detailed architecture rules in this file.
+
+For non-trivial structural changes:
+1. read `docs/ARCHITECTURE.md`;
+2. use Graphify as required by this repository;
+3. preserve existing boundaries unless the task justifies changing them.
+
+Architecture decisions must remain consistent with `PRD.md`,
+`docs/DESIGN.md`, and the applicable scoped `AGENTS.md`.
+
+## Quality gates, commits, and pushes
+
+Do not commit or push changes with known failing required checks.
+
+The required validation depends on the change scope.
+
+### Flutter / Dart source changes
+
+Before commit or push, run the full local app quality gate from `app/`:
+
+```powershell
+dart format --output=none --set-exit-if-changed .
+flutter analyze --fatal-infos --fatal-warnings
+dart run dart_code_linter:metrics analyze --fatal-style --fatal-performance --fatal-warnings lib
+dart run dart_code_linter:metrics check-unused-code --analyze-private-members lib
+dart run dart_code_linter:metrics check-unused-files lib
+dart run dart_code_linter:metrics check-unnecessary-nullable lib
+dart run dartrics analyze lib
+flutter test --coverage
+```
+
+Then from the repository root:
+
+```powershell
+git diff --check
+```
+
+All required checks must pass before a commit or push is considered ready.
+
+### Documentation-only changes
+
+Do not run the full Flutter suite unnecessarily.
+
+At minimum run:
+
+```powershell
+git diff --check
+```
+
+Also run any documentation, link, or workflow-specific checks affected by the
+change.
+
+### Workflow / CI changes
+
+Validate the workflow syntax and run the checks affected by the workflow change.
+
+Do not modify CI merely to hide or bypass a failing source-code quality rule.
+
+### Dependency changes
+
+Resolve dependencies successfully and run the full quality gate for the
+affected application/code.
+
+### Push and CI policy
+
+A remote GitHub Actions run cannot pass until the commit has been pushed.
+
+Therefore the required sequence is:
+
+```text
+make changes
+→ run required local checks
+→ all required local checks pass
+→ review diff
+→ commit/push only when authorized
+→ GitHub Actions runs
+→ required CI checks must pass
+```
+
+A pushed change is not considered complete while required GitHub Actions checks
+are failing.
+
+Do not merge a pull request while required CI is failing.
+
+If CI fails:
+
+1. inspect the failing job and exact failing step;
+2. identify the root cause;
+3. fix the source/configuration rather than weakening the quality gate;
+4. rerun the relevant local checks;
+5. push the fix;
+6. verify required CI becomes green.
+
+Never:
+
+* disable a required check just to obtain green CI;
+* remove a lint rule solely because new code violates it;
+* add blanket ignores/suppressions without a documented technical reason;
+* skip tests because they are inconvenient;
+* rerun an unchanged failing workflow and treat that as a fix.
+
+If a required check appears incorrect or incompatible with the project,
+investigate and explain the issue before changing the rule or workflow.
+
+### Agent authorization
+
+Passing checks does not grant permission to commit, push, merge, open a pull
+request, or modify remote state.
+
+Only perform those actions when the user has explicitly authorized them.

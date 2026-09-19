@@ -1,0 +1,2 @@
+# Keep executable repository hooks portable.
+app/.githooks/* text eol=lf

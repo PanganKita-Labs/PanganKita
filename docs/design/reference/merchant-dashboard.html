@@ -1,0 +1,258 @@
+<!-- PANGANKITA VISUAL REFERENCE ONLY. Not production source. PRD.md, official Brand Guidelines, docs/DESIGN.md, and scoped design instructions are authoritative. All displayed merchant/user/product/price/location/statistic data is deterministic prototype data. -->
+<!DOCTYPE html><html lang="id" style=""><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"><meta content="mobile_tab" name="shell-type"><link href="https://fonts.googleapis.com" rel="preconnect"><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"><link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"><style>@layer base{html,body{width:100%;margin:0;padding:0;background-color:#FAF6F0;color:#1c1c18;}body{overscroll-behavior:none;-webkit-tap-highlight-color:transparent;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"secondary-container":"#fd9923","surface-container-highest":"#e6e2dc","tertiary-container":"#2e6944","statusSuccess":"#1B6B3A","on-error":"#ffffff","brandAccentSoft":"#F8B75C","on-secondary-fixed-variant":"#6b3b00","savingsBg":"#E8F5E9","secondary":"#8c4f00","surface-tint":"#1c6c3b","textSecondary":"#666666","on-primary-container":"#9ae9ab","surface-container-lowest":"#ffffff","surfaceMuted":"#E8E4DF","on-secondary-fixed":"#2d1600","error":"#ba1a1a","primary-fixed":"#a5f4b6","surface-container-low":"#f7f3ed","on-primary":"#ffffff","secondary-fixed-dim":"#ffb874","primary":"#005127","background":"#fdf9f3","primary-container":"#1b6b3a","inverse-on-surface":"#f4f0ea","on-surface":"#1c1c18","surface-bright":"#fdf9f3","on-tertiary":"#ffffff","brandPrimary":"#1B6B3A","on-tertiary-fixed-variant":"#13512f","surface-dim":"#dddad4","primary-fixed-dim":"#8ad89c","statusInfo":"#2B6CB0","surface-variant":"#e6e2dc","outline":"#707a6f","inverse-primary":"#8ad89c","surface-container-high":"#ebe8e2","textPrimary":"#2D2D2D","on-tertiary-container":"#a7e6b8","statusWarning":"#F5921B","brandPrimaryStrong":"#0D4D2B","surface-container":"#f1ede7","on-background":"#1c1c18","on-secondary-container":"#663800","secondary-fixed":"#ffdcbf","on-primary-fixed":"#00210c","error-container":"#ffdad6","brandAccent":"#F5921B","on-tertiary-fixed":"#00210e","on-primary-fixed-variant":"#005227","tertiary-fixed-dim":"#97d5a7","surfaceWarm":"#FAF6F0","tertiary-fixed":"#b2f1c2","on-secondary":"#ffffff","tertiary":"#12502e","savingsGreen":"#0E5B2E","outline-variant":"#bfc9bd","on-surface-variant":"#404940","inverse-surface":"#31302d","statusDanger":"#D32F2F","border":"#E8E4DF","on-error-container":"#93000a","surface":"#FFFFFF"},"borderRadius":{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},"spacing":{"space-sm":"0.5rem","space-xl":"2rem","margin-sm":"0.75rem","gutter":"1rem","space-2xs":"0.125rem","margin":"1rem","space-xs":"0.25rem","space-lg":"1.5rem","space-2xl":"2.5rem","gutter-sm":"0.75rem","space-md":"1rem"},"fontFamily":{"body-lg":["Satoshi"],"display-lg":["Geist"],"code-display":["Geist"],"label-md":["Geist"],"headline-md":["Geist"],"body-md":["Satoshi"],"label-lg":["Geist"],"headline-sm":["Geist"],"price-headline":["Geist"],"label-sm":["Geist"],"headline-lg":["Geist"],"title-md":["Geist"],"body-sm":["Satoshi"]},"fontSize":{"body-lg":["16px",{"lineHeight":"24px","fontWeight":"400"}],"display-lg":["36px",{"lineHeight":"44px","fontWeight":"700"}],"code-display":["32px",{"lineHeight":"40px","letterSpacing":"4px","fontWeight":"700"}],"label-md":["12px",{"lineHeight":"16px","fontWeight":"600"}],"headline-md":["22px",{"lineHeight":"30px","fontWeight":"600"}],"body-md":["14px",{"lineHeight":"21px","fontWeight":"400"}],"label-lg":["14px",{"lineHeight":"20px","fontWeight":"600"}],"headline-sm":["18px",{"lineHeight":"26px","fontWeight":"600"}],"price-headline":["20px",{"lineHeight":"24px","fontWeight":"700"}],"label-sm":["11px",{"lineHeight":"14px","fontWeight":"500"}],"headline-lg":["28px",{"lineHeight":"36px","fontWeight":"700"}],"title-md":["16px",{"lineHeight":"24px","fontWeight":"600"}],"body-sm":["13px",{"lineHeight":"18px","fontWeight":"400"}]}}}};</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surfaceWarm font-body-md text-body-md text-on-surface flex flex-col min-h-screen"><header class="fixed top-0 inset-x-0 z-50 bg-surfaceWarm/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] pt-safe"><div class="h-16 px-margin flex items-center justify-between gap-space-sm"><div class="flex items-center gap-space-xs"><img alt="PanganKita Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1WXaRjssLDyimqv0Fr2iZJx_KCoqpySoVUuDozwIJUtWpx9cIzKOIPgYG6mHQDMoGPn0ZHcOOf1ptgFnrdd_NDmunJmb6pgoFTfJKWesMEYFtrPDzEDm3vgt0H3rRgJeuH9uvi6C0Hnb7FvStndIGHjjhDOygxeeNHQ_xjohTrHzcW_wUiodbW7uwzEI9ru-eKv7pZxXtotStM3Ob9dH5v5RINqlH3CAqRNrlaAMB1jCHUSKaWvS_b0NTYHeLkmKRYtK9wteTELK5s"><span class="font-headline-sm text-headline-sm text-brandPrimaryStrong tracking-tight">PanganKita</span></div><button class="min-h-[44px] px-space-xs flex items-center gap-space-2xs text-on-surface-variant hover:text-on-surface rounded-full" type="button"><span class="material-symbols-outlined text-brandAccent text-[18px]">near_me</span><span class="font-label-md text-label-md truncate max-w-[110px]">Tebet, Jaksel</span><span class="material-symbols-outlined text-[16px]">expand_more</span></button><div class="flex items-center gap-space-xs"><button aria-label="Notifikasi" class="w-11 h-11 flex items-center justify-center text-on-surface-variant relative rounded-full hover:bg-surface-container-high/60" type="button"><span class="material-symbols-outlined text-[22px]">notifications</span><span class="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-brandAccent"></span></button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="flex flex-col relative w-full pt-16 pb-24 bg-surfaceWarm flex-grow"><div class="flex flex-col w-full space-y-space-md px-margin pb-space-xl">
+<!-- Merchant Identity Banner -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm space-y-space-md">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-12 h-12 rounded-xl bg-surface-container-low flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined text-[28px]" style="font-variation-settings: 'FILL' 1;">bakery_dining</span>
+</div>
+<div class="min-w-0">
+<h1 class="font-headline-sm text-headline-sm text-on-surface truncate">Mon Petit Bakery</h1>
+<p class="font-body-sm text-body-sm text-textSecondary truncate">Cabang Tebet Barat • Mitra Aktif</p>
+</div>
+</div>
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-savingsBg text-savingsGreen font-label-sm text-label-sm shrink-0 font-medium">
+<span class="w-2 h-2 rounded-full bg-statusSuccess"></span>
+Terverifikasi
+</span>
+</div>
+<div class="grid grid-cols-3 divide-x divide-surface-container-high bg-surfaceWarm rounded-lg py-space-sm px-space-xs text-center">
+<div class="flex flex-col items-center justify-center px-space-xs">
+<span class="font-label-sm text-label-sm text-textSecondary">Listing Aktif</span>
+<span class="font-headline-sm text-headline-sm text-primary font-bold mt-0.5">3</span>
+</div>
+<div class="flex flex-col items-center justify-center px-space-xs">
+<span class="font-label-sm text-label-sm text-secondary">Siap Diambil</span>
+<span class="font-headline-sm text-headline-sm text-brandAccent font-bold mt-0.5">1</span>
+</div>
+<div class="flex flex-col items-center justify-center px-space-xs">
+<span class="font-label-sm text-label-sm text-textSecondary">Terselamatkan</span>
+<span class="font-label-lg text-label-lg text-savingsGreen font-bold mt-0.5 truncate max-w-full">Rp 340rb</span>
+</div>
+</div>
+</div>
+<!-- Primary Action: Create Listing -->
+<button class="w-full min-h-[48px] px-space-md py-space-sm rounded-xl bg-primary hover:bg-brandPrimaryStrong text-on-primary font-label-lg text-label-lg flex items-center justify-center gap-space-xs shadow-sm active:scale-[0.99] transition-transform font-semibold" onclick="document.getElementById('modal-create-listing').classList.remove('hidden')" type="button">
+<span class="material-symbols-outlined text-[20px]">add_circle</span>
+<span class="">+ Buat Listing Surplus Baru</span>
+</button>
+<!-- Section Title: Urgent Counter Queue -->
+<div class="space-y-space-xs">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-2xs">
+<span class="material-symbols-outlined text-brandAccent text-[20px]">notifications_active</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Antrean Pickup Kasir</h2>
+</div>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed font-semibold">1 Baru</span>
+</div>
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm space-y-space-sm">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-10 h-10 rounded-full bg-surfaceWarm text-primary font-title-md text-title-md font-bold flex items-center justify-center shrink-0">
+RS
+</div>
+<div class="min-w-0">
+<div class="flex items-center gap-space-xs">
+<span class="font-title-md text-title-md text-on-surface font-semibold truncate">Rian S.</span>
+<span class="font-label-sm text-label-sm px-1.5 py-0.5 rounded bg-surface-container text-textSecondary">ID: #PK-7824</span>
+</div>
+<p class="font-body-sm text-body-sm text-textSecondary truncate">1x Croissant Butter &amp; Danish Box</p>
+</div>
+</div>
+<span class="inline-flex items-center gap-1.5 font-label-sm text-label-sm px-2.5 py-1 rounded-full bg-savingsBg text-savingsGreen font-medium shrink-0">
+<span class="w-1.5 h-1.5 rounded-full bg-statusSuccess"></span>
+Siap Diambil
+</span>
+</div>
+<div class="flex items-center justify-between px-space-sm py-2 rounded-lg bg-surfaceWarm">
+<span class="font-body-sm text-body-sm text-textSecondary">Metode Bayar</span>
+<span class="font-label-md text-label-md text-on-surface font-bold">Rp 22.000 <span class="font-body-sm text-secondary font-normal">(Bayar di Kasir)</span></span>
+</div>
+<button class="w-full min-h-[44px] px-space-md py-space-xs rounded-lg bg-brandAccent hover:bg-secondary text-on-secondary font-label-md text-label-md flex items-center justify-center gap-space-xs shadow-sm active:scale-[0.99] transition-all font-semibold" onclick="document.getElementById('modal-verify-pin').classList.remove('hidden')" type="button">
+<span class="material-symbols-outlined text-[20px]">qr_code_scanner</span>
+<span class="">Verifikasi Kode Pickup</span>
+</button>
+</div>
+</div>
+<!-- Active Listing Management Card -->
+<div class="space-y-space-xs">
+<div class="flex items-center justify-between">
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Listing Aktif Toko</h2>
+<span class="font-label-sm text-label-sm text-textSecondary">1 dari 3 Ditampilkan</span>
+</div>
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm space-y-space-md">
+<div class="flex gap-space-sm items-start">
+<div class="w-20 h-20 rounded-lg overflow-hidden shrink-0 bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="Tiga buah croissant emas renyah mentega dan danish pastry artisanal dipajang rapi dalam kotak kemasan kraft ramah lingkungan di konter toko roti bernuansa kayu hangat dan pencahayaan lembut." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBrHV0YXrU3KfW_HHkIKfrITXSLMiuH5TPyNcXuzOyqP-Aj8gTOY8DmFp4hx4muMLZEMStTnlXonEdx4Ts1faucGdsZchDzGYlylrfsghI460jeQ6DtDppfVrO28zYmVreSFBma7NiiOVOcuj7dfJt_h5PCDoK55NXZCKlBQn1Zka-E_naroBqBs0ERetK0r_2B9AYbThnsLBmVkO5BXxYFEDzte16pt0826JuUD51S5iJPPPEq_cM-LA">
+</div>
+<div class="flex flex-col justify-between flex-1 min-w-0">
+<div>
+<div class="inline-flex items-center gap-1 font-label-sm text-label-sm text-secondary bg-secondary-fixed/50 px-2 py-0.5 rounded-full mb-1">
+<span class="material-symbols-outlined text-[14px]">schedule</span>
+<span class="">Batas 20.30 WIB (28 mnt)</span>
+</div>
+<h3 class="font-title-md text-title-md text-on-surface font-semibold truncate">Croissant Butter &amp; Danish Box</h3>
+<p class="font-body-sm text-body-sm text-textSecondary truncate">Paket isi 3 pcs artisan pastry</p>
+</div>
+<div class="flex items-baseline gap-space-xs mt-1">
+<span class="font-price-headline text-price-headline text-primary font-bold">Rp 22.000</span>
+<span class="font-body-sm text-body-sm text-textSecondary line-through">Rp 55.000</span>
+</div>
+</div>
+</div>
+<div class="bg-surfaceWarm rounded-lg p-space-sm space-y-space-xs">
+<div class="flex justify-between items-center">
+<span class="text-textSecondary font-label-md text-label-md">Status Batch Surplus</span>
+<span class="font-label-md text-label-md text-primary font-semibold">Total 6 Porsi</span>
+</div>
+<div class="w-full h-2 rounded-full bg-surface-container-highest flex overflow-hidden">
+<div class="bg-statusSuccess h-full" style="width: 66.6%;"></div>
+<div class="bg-brandAccent h-full" style="width: 16.7%;"></div>
+<div class="bg-outline-variant h-full" style="width: 16.7%;"></div>
+</div>
+<div class="grid grid-cols-3 gap-space-2xs pt-1 text-center font-label-sm text-label-sm">
+<div class="py-1 px-2 rounded bg-surface-container-lowest">
+<p class="text-statusSuccess font-bold text-label-md">4</p>
+<p class="text-textSecondary text-[11px]">Terjual</p>
+</div>
+<div class="py-1 px-2 rounded bg-surface-container-lowest">
+<p class="text-secondary font-bold text-label-md">1</p>
+<p class="text-textSecondary text-[11px]">Direservasi</p>
+</div>
+<div class="py-1 px-2 rounded bg-surface-container-lowest">
+<p class="text-on-surface font-bold text-label-md">1</p>
+<p class="text-textSecondary text-[11px]">Tersedia</p>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-space-sm">
+<button class="min-h-[44px] px-space-sm rounded-lg bg-savingsBg text-savingsGreen font-label-md text-label-md flex items-center justify-center gap-1.5 font-semibold hover:bg-savingsBg/80 transition-colors" onclick="document.getElementById('modal-verify-pin').classList.remove('hidden')" type="button">
+<span class="material-symbols-outlined text-[18px]">verified</span>
+<span class="">Verifikasi</span>
+</button>
+<button class="min-h-[44px] px-space-sm rounded-lg bg-surface-container-high text-on-surface font-label-md text-label-md flex items-center justify-center gap-1.5 font-semibold hover:bg-surface-container-highest transition-colors" onclick="alert('Buka menu update stok kuota')" type="button">
+<span class="material-symbols-outlined text-[18px]">tune</span>
+<span class="">Kelola Stok</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Secondary Section: Daily Outcomes & History -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm space-y-space-sm">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-savingsGreen text-[20px]">task_alt</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Selesai Hari Ini</h3>
+</div>
+<span class="font-label-sm text-label-sm text-textSecondary font-medium">4 Pesanan Selesai</span>
+</div>
+<div class="p-space-sm rounded-lg bg-savingsBg/60 flex items-center gap-space-sm"><div class="w-8 h-8 rounded-full bg-statusSuccess text-on-primary flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-[18px]">eco</span></div><div class="flex-1 min-w-0"><div class="flex items-center justify-between gap-space-xs"><p class="font-label-md text-label-md text-savingsGreen font-semibold truncate">Ringkasan Hari Ini</p><span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-savingsBg text-savingsGreen font-semibold shrink-0">4 Pesanan Selesai</span></div><p class="font-body-sm text-body-sm text-textSecondary mt-0.5">4 dari 6 porsi berhasil diambil pelanggan sebelum batas waktu pickup.</p></div></div>
+<div class="space-y-space-2xs pt-1 divide-y divide-surfaceWarm">
+<div class="flex items-center justify-between py-2 text-body-sm">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-statusSuccess text-[16px]">check_circle</span>
+<span class="font-label-md text-label-md text-on-surface font-medium">PK-6512 • Sourdough Loaf</span>
+</div>
+<span class="font-body-sm text-body-sm text-textSecondary">18.45 WIB</span>
+</div>
+<div class="flex items-center justify-between py-2 text-body-sm">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-statusSuccess text-[16px]">check_circle</span>
+<span class="font-label-md text-label-md text-on-surface font-medium">PK-6489 • Cinnamon Roll Duo</span>
+</div>
+<span class="font-body-sm text-body-sm text-textSecondary">17.15 WIB</span>
+</div>
+</div>
+</div>
+<!-- Verification Modal (Hidden by Default) -->
+<div class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-end justify-center" id="modal-verify-pin">
+<div class="w-full bg-surface-container-lowest rounded-t-2xl p-space-lg space-y-space-md animate-in slide-in-from-bottom duration-200">
+<div class="flex justify-between items-center">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Verifikasi Pickup Kasir</h3>
+<button class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant" onclick="document.getElementById('modal-verify-pin').classList.add('hidden')" type="button">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+<div class="text-center py-space-sm space-y-space-xs">
+<p class="font-body-md text-body-md text-on-surface-variant">Masukkan 4-digit kode pickup pelanggan:</p>
+<div class="flex justify-center gap-space-xs py-space-xs">
+<input class="w-12 h-14 text-center font-code-display text-code-display text-primary bg-surfaceWarm rounded-lg focus:outline-none" maxlength="1" type="text" value="7">
+<input class="w-12 h-14 text-center font-code-display text-code-display text-primary bg-surfaceWarm rounded-lg focus:outline-none" maxlength="1" type="text" value="8">
+<input class="w-12 h-14 text-center font-code-display text-code-display text-primary bg-surfaceWarm rounded-lg focus:outline-none" maxlength="1" type="text" value="2">
+<input class="w-12 h-14 text-center font-code-display text-code-display text-primary bg-surfaceWarm rounded-lg focus:outline-none" maxlength="1" type="text" value="4">
+</div>
+<p class="font-label-sm text-label-sm text-secondary">Pelanggan: Rian S. (1x Croissant Box)</p>
+</div>
+<div class="flex flex-col gap-space-xs">
+<button class="w-full min-h-[48px] rounded-xl bg-primary text-on-primary font-label-lg text-label-lg flex items-center justify-center gap-space-xs shadow-sm" onclick="alert('Pesanan PK-7824 Berhasil Dikonfirmasi!'); document.getElementById('modal-verify-pin').classList.add('hidden')" type="button">
+<span class="material-symbols-outlined text-[20px]">check</span>
+<span class="">Konfirmasi &amp; Serahkan Makanan</span>
+</button>
+<button class="w-full min-h-[44px] rounded-xl bg-surfaceWarm text-on-surface font-label-md text-label-md flex items-center justify-center gap-space-xs" onclick="alert('Kamera Scanner Aktif')" type="button">
+<span class="material-symbols-outlined text-[20px]">photo_camera</span>
+<span class="">Pindai QR Code Pembeli</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Create Listing Modal (Hidden by default) -->
+<div class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-end justify-center" id="modal-create-listing">
+<div class="w-full max-h-[751px] overflow-y-auto bg-surface-container-lowest rounded-t-2xl p-space-lg space-y-space-md animate-in slide-in-from-bottom duration-200">
+<div class="flex justify-between items-center">
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Buat Listing Surplus</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Pastikan makanan masih layak santap prima</p>
+</div>
+<button class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant" onclick="document.getElementById('modal-create-listing').classList.add('hidden')" type="button">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+<div class="space-y-space-sm">
+<div class="space-y-1">
+<label class="font-label-md text-label-md text-on-surface">Nama Menu / Paket</label>
+<input class="w-full min-h-[44px] px-space-sm rounded-lg bg-surfaceWarm text-on-surface placeholder:text-textSecondary focus:outline-none" placeholder="Contoh: Mystery Pastry Bag (Isi 4)" type="text">
+</div>
+<div class="grid grid-cols-2 gap-space-sm">
+<div class="space-y-1">
+<label class="font-label-md text-label-md text-on-surface">Harga Asli (Rp)</label>
+<input class="w-full min-h-[44px] px-space-sm rounded-lg bg-surfaceWarm text-on-surface placeholder:text-textSecondary focus:outline-none" placeholder="50000" type="number">
+</div>
+<div class="space-y-1">
+<label class="font-label-md text-label-md text-on-surface">Harga Surplus (Rp)</label>
+<input class="w-full min-h-[44px] px-space-sm rounded-lg bg-surfaceWarm text-on-surface placeholder:text-textSecondary focus:outline-none" placeholder="20000" type="number">
+</div>
+</div>
+<div class="grid grid-cols-2 gap-space-sm">
+<div class="space-y-1">
+<label class="font-label-md text-label-md text-on-surface">Jumlah Porsi</label>
+<input class="w-full min-h-[44px] px-space-sm rounded-lg bg-surfaceWarm text-on-surface placeholder:text-textSecondary focus:outline-none" placeholder="5" type="number">
+</div>
+<div class="space-y-1">
+<label class="font-label-md text-label-md text-on-surface">Batas Pickup</label>
+<input class="w-full min-h-[44px] px-space-sm rounded-lg bg-surfaceWarm text-on-surface focus:outline-none" type="time" value="21:00">
+</div>
+</div>
+<div class="space-y-1">
+<label class="font-label-md text-label-md text-on-surface">Catatan Wadah</label>
+<div class="flex items-center gap-space-xs p-space-xs rounded-lg bg-surfaceWarm">
+<input class="w-4 h-4 rounded text-primary" id="bring-box" type="checkbox">
+<label class="font-body-sm text-body-sm text-on-surface" for="bring-box">Beri insentif bawa wadah sendiri</label>
+</div>
+</div>
+</div>
+<button class="w-full min-h-[48px] rounded-xl bg-primary hover:bg-brandPrimaryStrong text-on-primary font-label-lg text-label-lg flex items-center justify-center gap-space-xs shadow-sm" onclick="alert('Listing Surplus Baru Berhasil Diterbitkan!'); document.getElementById('modal-create-listing').classList.add('hidden')" type="button">
+<span class="material-symbols-outlined text-[20px]">publish</span>
+<span class="">Terbitkan Sekarang</span>
+</button>
+</div>
+</div>
+</div></main><nav class="fixed bottom-0 inset-x-0 z-50 pb-safe bg-surface/90 backdrop-blur-xl shadow-[0_-2px_16px_rgba(45,45,45,0.06)]" data-active-classes="text-brandPrimary font-bold"><div class="flex items-center justify-around h-16 px-space-xs"><a class="flex flex-col items-center justify-center min-w-[64px] min-h-[44px] gap-space-2xs text-on-surface-variant transition-colors" data-path="eksplor" href="#"><span class="material-symbols-outlined text-[24px]">storefront</span><span class="font-label-sm text-label-sm">Eksplor</span></a><a aria-current="page" class="flex flex-col items-center justify-center min-w-[64px] min-h-[44px] gap-space-2xs transition-colors relative text-brandPrimary font-bold" data-path="reservasi" href="#"><span class="material-symbols-outlined text-[24px]">receipt_long</span><span class="font-label-sm text-label-sm">Reservasi</span><span class="absolute top-1 right-3 w-2 h-2 rounded-full bg-brandAccent"></span></a><a class="flex flex-col items-center justify-center min-w-[64px] min-h-[44px] gap-space-2xs text-on-surface-variant transition-colors" data-path="dampak" href="#"><span class="material-symbols-outlined text-[24px]">eco</span><span class="font-label-sm text-label-sm">Dampak</span></a><a class="flex flex-col items-center justify-center min-w-[64px] min-h-[44px] gap-space-2xs text-on-surface-variant transition-colors" data-path="profil" href="#"><span class="material-symbols-outlined text-[24px]">person</span><span class="font-label-sm text-label-sm">Profil</span></a></div></nav>
+
+</body></html>
