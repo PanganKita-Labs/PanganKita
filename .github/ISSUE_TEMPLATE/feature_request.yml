@@ -1,0 +1,122 @@
+name: Feature request
+description: Propose a focused improvement to PanganKita
+title: "feat: "
+labels:
+  - enhancement
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Explain the problem first, then propose the smallest useful solution.
+
+        PanganKita prioritizes a reliable core food-rescue transaction loop,
+        responsible food handling, user privacy, accessibility, measurable
+        outcomes, and changes that can be validated.
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched existing issues and pull requests.
+          required: true
+        - label: I considered whether existing behavior already solves the problem.
+          required: true
+        - label: I am describing a user or product problem, not only proposing technology.
+          required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Consumer onboarding
+        - Business onboarding or verification
+        - Food discovery
+        - Search or filtering
+        - Food listings
+        - Inventory
+        - Reservation
+        - Pickup
+        - Cancellation or expiration
+        - Location or maps
+        - Notifications
+        - Food eligibility or safety
+        - Trust and reporting
+        - Accessibility
+        - Localization
+        - Analytics or impact measurement
+        - Matching or ranking
+        - Developer experience
+        - Research
+        - Documentation
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What limitation, user need, or operational problem should be addressed?
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+      description: Describe the smallest useful solution.
+    validations:
+      required: true
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence or validation
+      description: |
+        If available, provide research, user feedback, observation, experiment,
+        issue references, or other evidence supporting the problem.
+    validations:
+      required: false
+
+  - type: textarea
+    id: success
+    attributes:
+      label: Success criteria
+      description: How would we know this improvement works?
+    validations:
+      required: false
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: What smaller solutions, workarounds, or alternatives did you consider?
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: impact
+    attributes:
+      label: Expected impact
+      options:
+        - label: Changes reservation or inventory behavior
+        - label: Changes food eligibility or safety behavior
+        - label: Uses location data
+        - label: Introduces or changes personal-data collection
+        - label: Changes authentication or permissions
+        - label: Changes matching or ranking behavior
+        - label: Adds analytics or telemetry
+        - label: Requires a new dependency
+        - label: Requires backend/API changes
+        - label: Requires visible user-interface changes
+        - label: Requires research or validation before implementation
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+    validations:
+      required: false

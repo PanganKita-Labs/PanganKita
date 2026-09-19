@@ -1,0 +1,155 @@
+name: Bug report
+description: Report reproducible incorrect behavior in PanganKita
+title: "fix: "
+labels:
+  - bug
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for reporting a bug.
+
+        Do not publicly include passwords, authentication tokens, precise home
+        addresses, payment information, private business data, or other personal
+        information.
+
+        Security vulnerabilities must be reported privately through `SECURITY.md`.
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched existing issues and pull requests.
+          required: true
+        - label: I reproduced this on the latest available version or latest `main`.
+          required: true
+        - label: This is not a private security vulnerability.
+          required: true
+        - label: I removed personal, location, authentication, and private business data from all evidence.
+          required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Affected area
+      options:
+        - App startup or navigation
+        - Account or authentication
+        - Business onboarding or verification
+        - Food discovery
+        - Search or filtering
+        - Listing details
+        - Listing creation or management
+        - Inventory
+        - Reservation
+        - Pickup
+        - Cancellation or expiration
+        - Location or maps
+        - Notifications
+        - Food eligibility or safety information
+        - History or impact
+        - User interface or accessibility
+        - Localization
+        - Performance
+        - Documentation
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Problem
+      description: Describe what is wrong and why it matters.
+      placeholder: PanganKita...
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction steps
+      description: Provide the smallest reliable sequence that reproduces the problem.
+      placeholder: |
+        1. Open PanganKita...
+        2. Navigate to...
+        3. Select...
+        4. Observe...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: PanganKita version
+      placeholder: v0.1.0, commit SHA, or branch
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      placeholder: |
+        Device:
+        Android version:
+        Build/version:
+        Network type, if relevant:
+    validations:
+      required: true
+
+  - type: dropdown
+    id: reproducibility
+    attributes:
+      label: Reproducibility
+      options:
+        - Always
+        - Often
+        - Sometimes
+        - Once
+    validations:
+      required: true
+
+  - type: textarea
+    id: data_integrity
+    attributes:
+      label: Reservation or data integrity impact
+      description: |
+        If relevant, describe whether quantities, reservation state, pickup state,
+        account data, or other persisted information became incorrect.
+    validations:
+      required: false
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Sanitized logs or screenshots
+      description: |
+        Remove tokens, precise locations, personal information, private business
+        information, and other sensitive data before attaching evidence.
+      render: text
+    validations:
+      required: false
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+    validations:
+      required: false
