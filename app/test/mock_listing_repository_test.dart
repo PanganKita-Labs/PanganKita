@@ -1,9 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:pangankita/features/discovery/mock_listing_repository.dart';
+import 'package:pangankita/features/discovery/data/mock_listing_repository.dart';
 
 void main() {
   test('mock listing snapshots are stable and cannot be mutated', () async {
-    const repository = MockListingRepository();
+    final now = DateTime.utc(2026, 9, 19, 12);
+    final repository = MockListingRepository(referenceTime: now);
     final first = await repository.loadListings();
     final second = await repository.loadListings();
 
@@ -12,7 +13,15 @@ void main() {
       'sample-bread',
       'sample-meal',
     ]);
-    expect(first.first.pickupDeadline, DateTime.utc(2030, 1, 1, 12));
+    expect(
+      first.first.offer.pickupDeadline,
+      now.add(const Duration(minutes: 45)),
+    );
+    expect(
+      (await repository.getListing('sample-meal'))?.name,
+      'Paket nasi ayam',
+    );
+    expect(await repository.getListing('missing'), isNull);
     expect(first.clear, throwsUnsupportedError);
   });
 }

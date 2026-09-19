@@ -20,3 +20,7 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/brand/logo-primary.png
+    - assets/food/pastry-box.png
+    - assets/food/rice-meal.png
