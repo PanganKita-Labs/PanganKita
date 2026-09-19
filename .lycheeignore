@@ -1,0 +1,11 @@
+# Local development URLs
+^https?://localhost(:[0-9]+)?(/.*)?$
+^https?://127\.0\.0\.1(:[0-9]+)?(/.*)?$
+^https?://0\.0\.0\.0(:[0-9]+)?(/.*)?$
+
+# Placeholder/example URLs used in documentation
+^https?://example\.com(/.*)?$
+^https?://example\.org(/.*)?$
+
+# Email links are not HTTP resources
+^mailto:
