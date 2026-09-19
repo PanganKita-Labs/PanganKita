@@ -72,3 +72,7 @@ pnpm-debug.log*
 # Test / tool output
 **/test-results/
 **/.coverage
+
+# Graphify
+**/graphify/
+**/graphify-out/

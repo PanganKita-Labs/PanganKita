@@ -22,7 +22,7 @@ defaults:
 
 jobs:
   quality:
-    name: Flutter quality
+    name: Quality gate
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
