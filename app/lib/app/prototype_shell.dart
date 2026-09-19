@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:pangankita/app/pangan_kita_theme.dart';
-import 'package:pangankita/features/discovery/listing_repository.dart';
+import 'package:pangankita/features/discovery/domain/listing_repository.dart';
+import 'package:pangankita/features/discovery/presentation/discover_page.dart';
+import 'package:pangankita/features/discovery/presentation/discovery_copy.dart';
+import 'package:pangankita/features/discovery/presentation/listing_detail_page.dart';
 
 /// Local-only prototype roles; these do not grant authorization.
 enum _PrototypeRole { consumer, business }
@@ -8,16 +11,29 @@ enum _PrototypeRole { consumer, business }
 /// Temporary navigation shell for the two future experiences.
 class PrototypeShell extends StatefulWidget {
   /// Creates the shell with its discovery data source.
-  const new({required this.listings, super.key});
+  const new({
+    required this.listings,
+    required this.referenceTime,
+    required this.areaName,
+    super.key,
+  });
 
-  /// Listing source used to confirm prototype data is wired up.
+  /// Listing source injected at application composition.
   final ListingRepository listings;
+
+  /// One reference time shared by the mock repository and discovery UI.
+  final DateTime referenceTime;
+
+  /// Fixed area selected for this local prototype.
+  final String areaName;
 
   @override
   State<PrototypeShell> createState() => _PrototypeShellState();
 }
 
 class _PrototypeShellState extends State<PrototypeShell> {
+  static const _logoSize = 48.0;
+
   _PrototypeRole _role = _PrototypeRole.consumer;
   int _selectedIndex = 0;
 
@@ -43,6 +59,18 @@ class _PrototypeShellState extends State<PrototypeShell> {
     });
   }
 
+  void _openListing(String id) {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (context) => ListingDetailPage(
+          listingId: id,
+          listings: widget.listings,
+          referenceTime: widget.referenceTime,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final tabs = _role == _PrototypeRole.consumer
@@ -52,7 +80,13 @@ class _PrototypeShellState extends State<PrototypeShell> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('PanganKita'),
+        title: SizedBox.square(
+          dimension: _logoSize,
+          child: Image.asset(
+            'assets/brand/logo-primary.png',
+            semanticLabel: DiscoveryCopy.logoLabel,
+          ),
+        ),
         actions: [
           TextButton(
             onPressed: _switchRole,
@@ -64,12 +98,14 @@ class _PrototypeShellState extends State<PrototypeShell> {
           ),
         ],
       ),
-      body: _PrototypeDestination(
-        title: selected.label,
-        showListingCount:
-            _role == _PrototypeRole.consumer && _selectedIndex == 0,
-        listings: widget.listings,
-      ),
+      body: _role == _PrototypeRole.consumer && _selectedIndex == 0
+          ? DiscoverPage(
+              listings: widget.listings,
+              referenceTime: widget.referenceTime,
+              areaName: widget.areaName,
+              onOpenListing: _openListing,
+            )
+          : _PrototypeDestination(title: selected.label),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _selectedIndex,
         onDestinationSelected: (index) =>
@@ -84,15 +120,9 @@ class _PrototypeShellState extends State<PrototypeShell> {
 }
 
 class _PrototypeDestination extends StatelessWidget {
-  const new({
-    required this.title,
-    required this.showListingCount,
-    required this.listings,
-  });
+  const new({required this.title});
 
   final String title;
-  final bool showListingCount;
-  final ListingRepository listings;
 
   @override
   Widget build(BuildContext context) => SafeArea(
@@ -105,22 +135,6 @@ class _PrototypeDestination extends StatelessWidget {
             Text(title, style: Theme.of(context).textTheme.headlineMedium),
             const SizedBox(height: PanganKitaSpacing.sm),
             const Text('Halaman sementara untuk fondasi prototipe.'),
-            if (showListingCount)
-              FutureBuilder(
-                future: listings.loadListings(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasError) {
-                    return const Text('Data contoh tidak tersedia.');
-                  }
-                  if (!snapshot.hasData) {
-                    return const Text('Memuat data contoh…');
-                  }
-                  return Text(
-                    '${snapshot.data?.length} listing contoh siap '
-                    'untuk fase berikutnya.',
-                  );
-                },
-              ),
           ],
         ),
       ),

@@ -24,10 +24,7 @@ void main() {
       Colors.white,
     );
     expect(find.text('Discover'), findsWidgets);
-    expect(
-      find.text('2 listing contoh siap untuk fase berikutnya.'),
-      findsOneWidget,
-    );
+    expect(find.text('Paket pastry pilihan'), findsOneWidget);
 
     await tester.tap(find.text('Mode Bisnis'));
     await tester.pumpAndSettle();
