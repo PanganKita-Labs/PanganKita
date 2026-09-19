@@ -1,0 +1,2 @@
+## NOTE
+BACKEND WON'T BE DEVELOPED FOR NOW THE AGENTS.MD is for future reference.
