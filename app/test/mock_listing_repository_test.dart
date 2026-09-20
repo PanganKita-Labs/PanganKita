@@ -4,7 +4,10 @@ import 'package:pangankita/features/discovery/data/mock_listing_repository.dart'
 void main() {
   test('mock listing snapshots are stable and cannot be mutated', () async {
     final now = DateTime.utc(2026, 9, 19, 12);
-    final repository = MockListingRepository(referenceTime: now);
+    final repository = MockListingRepository(
+      referenceTime: now,
+      now: () => now,
+    );
     final first = await repository.loadListings();
     final second = await repository.loadListings();
 

@@ -50,6 +50,25 @@ class MockReservationRepository implements ReservationRepository {
   }
 
   @override
+  Future<List<Reservation>> loadMerchantReservations(String merchantId) async {
+    _expirePastDeadlines();
+    return List<Reservation>.unmodifiable(
+      _reservations.reversed.where(
+        (item) => item.listing.merchant.id == merchantId,
+      ),
+    );
+  }
+
+  @override
+  Future<Reservation?> getMerchantReservation(
+    String id,
+    String merchantId,
+  ) async {
+    final reservation = await getReservation(id);
+    return reservation?.listing.merchant.id == merchantId ? reservation : null;
+  }
+
+  @override
   Future<Reservation> markReady(String id) async => _transition(
     id,
     from: ReservationStatus.reserved,
@@ -57,11 +76,32 @@ class MockReservationRepository implements ReservationRepository {
   );
 
   @override
-  Future<Reservation> complete(String id) async => _transition(
-    id,
-    from: ReservationStatus.readyForPickup,
-    to: ReservationStatus.completed,
-  );
+  Future<Reservation> complete(String id) async {
+    final completed = _transition(
+      id,
+      from: ReservationStatus.readyForPickup,
+      to: ReservationStatus.completed,
+    );
+    _listings.finishHold(completed.listing.id, completed.quantity);
+    return completed;
+  }
+
+  @override
+  Future<Reservation> verifyPickup(
+    String id,
+    String merchantId,
+    String code,
+  ) async {
+    final reservation = await getMerchantReservation(id, merchantId);
+    if (reservation == null) {
+      throw const ReservationException(ReservationFailure.notFound);
+    }
+    if (reservation.pickupCode != code.trim().toUpperCase()) {
+      throw const ReservationException(ReservationFailure.invalidCode);
+    }
+    if (reservation.status == ReservationStatus.completed) return reservation;
+    return await complete(id);
+  }
 
   @override
   Future<Reservation> cancel(String id) async {
@@ -100,6 +140,7 @@ class MockReservationRepository implements ReservationRepository {
       if ((reservation.status == ReservationStatus.reserved ||
               reservation.status == ReservationStatus.readyForPickup) &&
           !reservation.listing.offer.pickupDeadline.isAfter(now)) {
+        _listings.finishHold(reservation.listing.id, reservation.quantity);
         _reservations[index] = reservation.withStatus(
           ReservationStatus.expired,
         );

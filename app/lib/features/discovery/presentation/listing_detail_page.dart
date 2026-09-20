@@ -340,6 +340,7 @@ class _ReservationBoundary extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final available =
+        listing.status == ListingStatus.active &&
         listing.offer.availableQuantity > 0 &&
         listing.offer.pickupDeadline.isAfter(referenceTime);
     return SafeArea(

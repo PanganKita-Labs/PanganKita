@@ -11,11 +11,21 @@ abstract interface class ReservationRepository {
   /// Returns the current reservation or null when absent.
   Future<Reservation?> getReservation(String id);
 
+  /// Returns reservations for one fictional merchant, newest first.
+  Future<List<Reservation>> loadMerchantReservations(String merchantId);
+
+  /// Returns one merchant reservation without exposing another merchant's.
+  Future<Reservation?> getMerchantReservation(String id, String merchantId);
+
   /// Simulates the merchant marking an existing reservation ready.
   Future<Reservation> markReady(String id);
 
   /// Simulates pickup completion after readiness.
   Future<Reservation> complete(String id);
+
+  /// Completes one ready reservation after matching its local demo code.
+  /// Repeated verification of the completed code returns the same result.
+  Future<Reservation> verifyPickup(String id, String merchantId, String code);
 
   /// Cancels a reservation while it remains reserved.
   Future<Reservation> cancel(String id);

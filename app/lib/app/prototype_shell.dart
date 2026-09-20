@@ -1,5 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:pangankita/app/pangan_kita_theme.dart';
+import 'package:pangankita/features/business/presentation/business_impact_page.dart';
+import 'package:pangankita/features/business/presentation/business_listing_detail_page.dart';
+import 'package:pangankita/features/business/presentation/business_listings_page.dart';
+import 'package:pangankita/features/business/presentation/business_profile_page.dart';
+import 'package:pangankita/features/business/presentation/business_reservation_detail_page.dart';
+import 'package:pangankita/features/business/presentation/business_reservations_page.dart';
+import 'package:pangankita/features/business/presentation/create_listing_page.dart';
 import 'package:pangankita/features/discovery/domain/listing.dart';
 import 'package:pangankita/features/discovery/domain/listing_repository.dart';
 import 'package:pangankita/features/discovery/presentation/discover_page.dart';
@@ -22,6 +29,7 @@ class PrototypeShell extends StatefulWidget {
     required this.reservations,
     required this.now,
     required this.areaName,
+    required this.merchant,
     super.key,
   });
 
@@ -36,6 +44,9 @@ class PrototypeShell extends StatefulWidget {
 
   /// Fixed area selected for this local prototype.
   final String areaName;
+
+  /// Fictional merchant selected by the local Business mode.
+  final ListingMerchant merchant;
 
   @override
   State<PrototypeShell> createState() => _PrototypeShellState();
@@ -104,7 +115,52 @@ class _PrototypeShellState extends State<PrototypeShell> {
     _openReservation(reservation.id);
   }
 
-  void _reservationChanged() => setState(() => _inventoryRevision++);
+  void _dataChanged() => setState(() => _inventoryRevision++);
+
+  void _listingSaved() {
+    Navigator.of(context).popUntil((route) => route.isFirst);
+    _dataChanged();
+  }
+
+  void _openCreateListing() {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (context) => CreateListingPage(
+          listings: widget.listings,
+          merchant: widget.merchant,
+          now: widget.now,
+          onSaved: _listingSaved,
+        ),
+      ),
+    );
+  }
+
+  void _openBusinessListing(String id) {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (context) => BusinessListingDetailPage(
+          listingId: id,
+          merchantId: widget.merchant.id,
+          listings: widget.listings,
+          reservations: widget.reservations,
+          onChanged: _dataChanged,
+        ),
+      ),
+    );
+  }
+
+  void _openBusinessReservation(String id) {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (context) => BusinessReservationDetailPage(
+          reservationId: id,
+          merchantId: widget.merchant.id,
+          reservations: widget.reservations,
+          onChanged: _dataChanged,
+        ),
+      ),
+    );
+  }
 
   void _openReservation(String id) {
     Navigator.of(context).push(
@@ -112,7 +168,7 @@ class _PrototypeShellState extends State<PrototypeShell> {
         builder: (context) => ReservationDetailPage(
           reservationId: id,
           reservations: widget.reservations,
-          onChanged: _reservationChanged,
+          onChanged: _dataChanged,
         ),
       ),
     );
@@ -162,7 +218,30 @@ class _PrototypeShellState extends State<PrototypeShell> {
               ),
               _ => _PrototypeDestination(title: selected.label),
             }
-          : _PrototypeDestination(title: selected.label),
+          : switch (_selectedIndex) {
+              0 => BusinessListingsPage(
+                listings: widget.listings,
+                reservations: widget.reservations,
+                merchant: widget.merchant,
+                revision: _inventoryRevision,
+                onCreate: _openCreateListing,
+                onOpenListing: _openBusinessListing,
+                onOpenReservation: _openBusinessReservation,
+              ),
+              1 => BusinessReservationsPage(
+                reservations: widget.reservations,
+                merchantId: widget.merchant.id,
+                revision: _inventoryRevision,
+                onOpen: _openBusinessReservation,
+              ),
+              2 => BusinessImpactPage(
+                listings: widget.listings,
+                reservations: widget.reservations,
+                merchantId: widget.merchant.id,
+                revision: _inventoryRevision,
+              ),
+              _ => BusinessProfilePage(merchant: widget.merchant),
+            },
       bottomNavigationBar: NavigationBar(
         selectedIndex: _selectedIndex,
         onDestinationSelected: (index) =>
