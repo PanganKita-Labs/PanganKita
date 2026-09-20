@@ -8,11 +8,12 @@ import 'package:pangankita/features/discovery/domain/listing.dart';
 import 'package:pangankita/features/discovery/domain/listing_repository.dart';
 import 'package:pangankita/features/discovery/presentation/discover_page.dart';
 import 'package:pangankita/features/discovery/presentation/listing_detail_page.dart';
+import 'package:pangankita/features/reservations/data/mock_reservation_repository.dart';
 
 void main() {
   final now = DateTime(2026, 9, 19, 18);
 
-  testWidgets('search, category, detail and reservation boundary', (
+  testWidgets('search, category, detail and reservation review entry', (
     tester,
   ) async {
     tester.view.physicalSize = const Size(390, 844);
@@ -21,11 +22,13 @@ void main() {
     addTearDown(tester.view.resetDevicePixelRatio);
 
     final repository = MockListingRepository(referenceTime: now);
+    final reservations = MockReservationRepository(repository, () => now);
     await tester.pumpWidget(
       MaterialApp(
         home: PrototypeShell(
           listings: repository,
-          referenceTime: now,
+          reservations: reservations,
+          now: () => now,
           areaName: MockListingRepository.prototypeArea,
         ),
       ),
@@ -54,9 +57,9 @@ void main() {
 
     await tester.tap(find.text('Lanjut ke reservasi'));
     await tester.pumpAndSettle();
-    expect(find.text('Reservasi belum tersedia'), findsOneWidget);
+    expect(find.text('Konfirmasi reservasi'), findsWidgets);
     expect(
-      find.textContaining('Belum ada pesanan yang dibuat'),
+      find.textContaining('Penjual tidak menerima pesanan nyata'),
       findsOneWidget,
     );
   });
@@ -108,11 +111,13 @@ void main() {
     addTearDown(tester.view.resetDevicePixelRatio);
 
     final repository = MockListingRepository(referenceTime: now);
+    final reservations = MockReservationRepository(repository, () => now);
     await tester.pumpWidget(
       MaterialApp(
         home: PrototypeShell(
           listings: repository,
-          referenceTime: now,
+          reservations: reservations,
+          now: () => now,
           areaName: MockListingRepository.prototypeArea,
         ),
       ),
@@ -126,6 +131,7 @@ void main() {
           listingId: 'sample-bread',
           listings: repository,
           referenceTime: now,
+          onReserve: (_) {},
         ),
       ),
     );
@@ -139,6 +145,7 @@ void main() {
           listingId: 'missing',
           listings: repository,
           referenceTime: now,
+          onReserve: (_) {},
         ),
       ),
     );

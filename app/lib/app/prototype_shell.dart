@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:pangankita/app/pangan_kita_theme.dart';
+import 'package:pangankita/features/discovery/domain/listing.dart';
 import 'package:pangankita/features/discovery/domain/listing_repository.dart';
 import 'package:pangankita/features/discovery/presentation/discover_page.dart';
 import 'package:pangankita/features/discovery/presentation/discovery_copy.dart';
 import 'package:pangankita/features/discovery/presentation/listing_detail_page.dart';
+import 'package:pangankita/features/reservations/domain/reservation.dart';
+import 'package:pangankita/features/reservations/domain/reservation_repository.dart';
+import 'package:pangankita/features/reservations/presentation/reservation_confirmation_page.dart';
+import 'package:pangankita/features/reservations/presentation/reservation_detail_page.dart';
+import 'package:pangankita/features/reservations/presentation/reservations_page.dart';
 
 /// Local-only prototype roles; these do not grant authorization.
 enum _PrototypeRole { consumer, business }
@@ -13,7 +19,8 @@ class PrototypeShell extends StatefulWidget {
   /// Creates the shell with its discovery data source.
   const new({
     required this.listings,
-    required this.referenceTime,
+    required this.reservations,
+    required this.now,
     required this.areaName,
     super.key,
   });
@@ -21,8 +28,11 @@ class PrototypeShell extends StatefulWidget {
   /// Listing source injected at application composition.
   final ListingRepository listings;
 
-  /// One reference time shared by the mock repository and discovery UI.
-  final DateTime referenceTime;
+  /// Local reservation state shared across consumer routes.
+  final ReservationRepository reservations;
+
+  /// Clock injected at application composition.
+  final DateTime Function() now;
 
   /// Fixed area selected for this local prototype.
   final String areaName;
@@ -36,6 +46,7 @@ class _PrototypeShellState extends State<PrototypeShell> {
 
   _PrototypeRole _role = _PrototypeRole.consumer;
   int _selectedIndex = 0;
+  int _inventoryRevision = 0;
 
   static const List<({String label, IconData icon})> _consumerTabs = [
     (label: 'Discover', icon: Icons.search),
@@ -65,7 +76,43 @@ class _PrototypeShellState extends State<PrototypeShell> {
         builder: (context) => ListingDetailPage(
           listingId: id,
           listings: widget.listings,
-          referenceTime: widget.referenceTime,
+          referenceTime: widget.now(),
+          onReserve: _openConfirmation,
+        ),
+      ),
+    );
+  }
+
+  void _openConfirmation(Listing listing) {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (context) => ReservationConfirmationPage(
+          listing: listing,
+          reservations: widget.reservations,
+          onCreated: _reservationCreated,
+        ),
+      ),
+    );
+  }
+
+  void _reservationCreated(Reservation reservation) {
+    Navigator.of(context).popUntil((route) => route.isFirst);
+    setState(() {
+      _selectedIndex = 1;
+      _inventoryRevision++;
+    });
+    _openReservation(reservation.id);
+  }
+
+  void _reservationChanged() => setState(() => _inventoryRevision++);
+
+  void _openReservation(String id) {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (context) => ReservationDetailPage(
+          reservationId: id,
+          reservations: widget.reservations,
+          onChanged: _reservationChanged,
         ),
       ),
     );
@@ -98,13 +145,23 @@ class _PrototypeShellState extends State<PrototypeShell> {
           ),
         ],
       ),
-      body: _role == _PrototypeRole.consumer && _selectedIndex == 0
-          ? DiscoverPage(
-              listings: widget.listings,
-              referenceTime: widget.referenceTime,
-              areaName: widget.areaName,
-              onOpenListing: _openListing,
-            )
+      body: _role == _PrototypeRole.consumer
+          ? switch (_selectedIndex) {
+              0 => DiscoverPage(
+                key: ValueKey(_inventoryRevision),
+                listings: widget.listings,
+                referenceTime: widget.now(),
+                areaName: widget.areaName,
+                onOpenListing: _openListing,
+              ),
+              1 => ReservationsPage(
+                reservations: widget.reservations,
+                revision: _inventoryRevision,
+                onOpen: _openReservation,
+                onBrowse: () => setState(() => _selectedIndex = 0),
+              ),
+              _ => _PrototypeDestination(title: selected.label),
+            }
           : _PrototypeDestination(title: selected.label),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _selectedIndex,

@@ -87,7 +87,7 @@ abstract final class DiscoveryCopy {
   /// Photo attribution for generated mock imagery.
   static const illustrativePhoto = 'Foto ilustrasi untuk data contoh';
 
-  /// Price note for the future reservation flow.
+  /// Price note for the reservation flow.
   static const payAtPickup =
       'Bayar saat pickup dengan metode yang diterima penjual.';
 
@@ -96,17 +96,6 @@ abstract final class DiscoveryCopy {
 
   /// Unavailable listing action state.
   static const unavailable = 'Tidak tersedia';
-
-  /// Boundary message heading.
-  static const reservationUnavailable = 'Reservasi belum tersedia';
-
-  /// Boundary message body; no reservation is created.
-  static const reservationBoundary =
-      'Alur reservasi akan tersedia pada fase berikutnya. '
-      'Belum ada pesanan yang dibuat.';
-
-  /// Dismisses the boundary message.
-  static const understood = 'Mengerti';
 
   /// Back action label.
   static const back = 'Kembali';

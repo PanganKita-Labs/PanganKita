@@ -76,7 +76,7 @@ class ListingOffer {
   /// Seller-provided original price in whole rupiah.
   final int originalPriceRupiah;
 
-  /// Units available in this local snapshot, not reserved inventory.
+  /// Units available in this local snapshot, after local demo holds.
   final int availableQuantity;
 
   /// Start of the seller's pickup window.
