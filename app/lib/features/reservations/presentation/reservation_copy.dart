@@ -136,5 +136,6 @@ abstract final class ReservationCopy {
     ReservationFailure.notFound => 'Reservasi contoh tidak ditemukan.',
     ReservationFailure.invalidTransition =>
       'Status reservasi sudah berubah. Muat ulang dan coba lagi.',
+    ReservationFailure.invalidCode => 'Kode pickup contoh tidak cocok.',
   };
 }

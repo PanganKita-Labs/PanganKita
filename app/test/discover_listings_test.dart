@@ -6,8 +6,10 @@ import 'package:pangankita/features/discovery/domain/listing.dart';
 void main() {
   test('search and category filter only matching active listings', () async {
     final now = DateTime.utc(2026, 9, 19, 12);
-    final listings = await MockListingRepository(referenceTime: now)
-        .loadListings();
+    final listings = await MockListingRepository(
+      referenceTime: now,
+      now: () => now,
+    ).loadListings();
 
     final all = discoverListings(listings, now: now);
     expect(all.urgent.map((listing) => listing.id), ['sample-bread']);
@@ -29,8 +31,10 @@ void main() {
 
   test('a passed pickup deadline removes a listing from discovery', () async {
     final start = DateTime.utc(2026, 9, 19, 12);
-    final listings = await MockListingRepository(referenceTime: start)
-        .loadListings();
+    final listings = await MockListingRepository(
+      referenceTime: start,
+      now: () => start,
+    ).loadListings();
 
     final afterFirstDeadline = discoverListings(
       listings,

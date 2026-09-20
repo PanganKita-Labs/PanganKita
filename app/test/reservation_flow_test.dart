@@ -16,7 +16,7 @@ void main() {
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
 
-    final listings = MockListingRepository(referenceTime: now);
+    final listings = MockListingRepository(referenceTime: now, now: () => now);
     final reservations = MockReservationRepository(listings, () => now);
     await tester.pumpWidget(
       MaterialApp(
@@ -25,6 +25,7 @@ void main() {
           reservations: reservations,
           now: () => now,
           areaName: MockListingRepository.prototypeArea,
+          merchant: MockListingRepository.prototypeMerchant,
         ),
       ),
     );
@@ -81,7 +82,7 @@ void main() {
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
 
-    final listings = MockListingRepository(referenceTime: now);
+    final listings = MockListingRepository(referenceTime: now, now: () => now);
     final reservations = MockReservationRepository(listings, () => now);
     await tester.pumpWidget(
       MaterialApp(
@@ -90,6 +91,7 @@ void main() {
           reservations: reservations,
           now: () => now,
           areaName: MockListingRepository.prototypeArea,
+          merchant: MockListingRepository.prototypeMerchant,
         ),
       ),
     );
@@ -126,7 +128,10 @@ void main() {
     tester,
   ) async {
     var current = now;
-    final listings = MockListingRepository(referenceTime: now);
+    final listings = MockListingRepository(
+      referenceTime: now,
+      now: () => current,
+    );
     final reservations = MockReservationRepository(listings, () => current);
     await tester.pumpWidget(
       MaterialApp(
@@ -135,6 +140,7 @@ void main() {
           reservations: reservations,
           now: () => current,
           areaName: MockListingRepository.prototypeArea,
+          merchant: MockListingRepository.prototypeMerchant,
         ),
       ),
     );

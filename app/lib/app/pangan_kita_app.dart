@@ -30,6 +30,7 @@ class _PanganKitaAppState extends State<PanganKitaApp> {
         reservations: _dependencies.reservations,
         now: DateTime.now,
         areaName: MockListingRepository.prototypeArea,
+        merchant: MockListingRepository.prototypeMerchant,
       ),
     );
   }
@@ -37,7 +38,10 @@ class _PanganKitaAppState extends State<PanganKitaApp> {
 
 ({MockListingRepository listings, MockReservationRepository reservations})
 _createDependencies() {
-  final listings = MockListingRepository(referenceTime: DateTime.now());
+  final listings = MockListingRepository(
+    referenceTime: DateTime.now(),
+    now: DateTime.now,
+  );
   return (
     listings: listings,
     reservations: MockReservationRepository(listings, DateTime.now),

@@ -72,6 +72,9 @@ enum ReservationFailure {
 
   /// The requested state change is not legal now.
   invalidTransition,
+
+  /// Entered pickup code does not match this local reservation.
+  invalidCode,
 }
 
 /// Typed failure from the local reservation repository.

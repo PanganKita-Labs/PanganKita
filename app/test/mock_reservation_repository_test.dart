@@ -10,7 +10,7 @@ void main() {
 
   setUp(() {
     now = DateTime.utc(2026, 9, 19, 12);
-    listings = MockListingRepository(referenceTime: now);
+    listings = MockListingRepository(referenceTime: now, now: () => now);
     reservations = MockReservationRepository(listings, () => now);
   });
 

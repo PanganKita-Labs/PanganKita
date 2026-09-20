@@ -42,6 +42,7 @@ bool _isVisible(
   String search,
   ListingCategory? category,
 ) =>
+    listing.status == ListingStatus.active &&
     listing.offer.availableQuantity > 0 &&
     listing.offer.pickupDeadline.isAfter(now) &&
     (category == null || listing.category == category) &&

@@ -21,7 +21,10 @@ void main() {
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
 
-    final repository = MockListingRepository(referenceTime: now);
+    final repository = MockListingRepository(
+      referenceTime: now,
+      now: () => now,
+    );
     final reservations = MockReservationRepository(repository, () => now);
     await tester.pumpWidget(
       MaterialApp(
@@ -30,6 +33,7 @@ void main() {
           reservations: reservations,
           now: () => now,
           areaName: MockListingRepository.prototypeArea,
+          merchant: MockListingRepository.prototypeMerchant,
         ),
       ),
     );
@@ -110,7 +114,10 @@ void main() {
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
 
-    final repository = MockListingRepository(referenceTime: now);
+    final repository = MockListingRepository(
+      referenceTime: now,
+      now: () => now,
+    );
     final reservations = MockReservationRepository(repository, () => now);
     await tester.pumpWidget(
       MaterialApp(
@@ -119,6 +126,7 @@ void main() {
           reservations: reservations,
           now: () => now,
           areaName: MockListingRepository.prototypeArea,
+          merchant: MockListingRepository.prototypeMerchant,
         ),
       ),
     );
@@ -168,4 +176,21 @@ class _FakeListingRepository implements ListingRepository {
 
   @override
   Future<Listing?> getListing(String id) async => null;
+
+  @override
+  Future<List<Listing>> loadMerchantListings(String merchantId) async => [];
+
+  @override
+  Future<Listing> createDraft(ListingDraft draft) async =>
+      throw UnimplementedError();
+
+  @override
+  Future<Listing> publish(String id) async => throw UnimplementedError();
+
+  @override
+  Future<Listing> updateQuantity(String id, int totalQuantity) async =>
+      throw UnimplementedError();
+
+  @override
+  Future<Listing> close(String id) async => throw UnimplementedError();
 }
