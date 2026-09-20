@@ -1,6 +1,6 @@
 import 'package:pangankita/features/reservations/domain/reservation.dart';
 
-/// Reservation operations used by the consumer prototype screens.
+/// Reservation operations shared by the consumer and merchant prototype.
 abstract interface class ReservationRepository {
   /// Creates a local reservation when stock and time still permit it.
   Future<Reservation> create(String listingId, int quantity);
@@ -19,9 +19,6 @@ abstract interface class ReservationRepository {
 
   /// Simulates the merchant marking an existing reservation ready.
   Future<Reservation> markReady(String id);
-
-  /// Simulates pickup completion after readiness.
-  Future<Reservation> complete(String id);
 
   /// Completes one ready reservation after matching its local demo code.
   /// Repeated verification of the completed code returns the same result.

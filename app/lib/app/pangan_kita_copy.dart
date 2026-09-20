@@ -25,5 +25,5 @@ abstract final class PanganKitaCopy {
   static const consumerMode = 'Mode Konsumen';
 
   /// Explains an unimplemented prototype destination.
-  static const temporaryPage = 'Halaman sementara untuk fondasi prototipe.';
+  static const temporaryPage = 'Belum tersedia dalam prototipe ini.';
 }

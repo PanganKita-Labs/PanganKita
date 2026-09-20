@@ -47,7 +47,11 @@ void main() {
   test('ready, completion and deadline transitions remain legal', () async {
     final reservation = await reservations.create('sample-bread', 1);
     await expectLater(
-      reservations.complete(reservation.id),
+      reservations.verifyPickup(
+        reservation.id,
+        MockListingRepository.prototypeMerchant.id,
+        reservation.pickupCode,
+      ),
       throwsA(isA<ReservationException>()),
     );
     final ready = await reservations.markReady(reservation.id);
@@ -56,7 +60,11 @@ void main() {
       reservations.cancel(reservation.id),
       throwsA(isA<ReservationException>()),
     );
-    final completed = await reservations.complete(reservation.id);
+    final completed = await reservations.verifyPickup(
+      reservation.id,
+      MockListingRepository.prototypeMerchant.id,
+      reservation.pickupCode,
+    );
     expect(completed.status, ReservationStatus.completed);
     now = now.add(const Duration(minutes: 45));
     expect(
@@ -64,8 +72,12 @@ void main() {
       ReservationStatus.completed,
     );
     await expectLater(
-      reservations.complete(reservation.id),
-      throwsA(isA<ReservationException>()),
+      reservations.verifyPickup(
+        reservation.id,
+        MockListingRepository.prototypeMerchant.id,
+        reservation.pickupCode,
+      ),
+      completion(same(completed)),
     );
   });
 

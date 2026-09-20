@@ -22,7 +22,7 @@ import 'package:pangankita/features/reservations/presentation/reservations_page.
 /// Local-only prototype roles; these do not grant authorization.
 enum _PrototypeRole { consumer, business }
 
-/// Temporary navigation shell for the two future experiences.
+/// Navigation shell for the local consumer and business prototype.
 class PrototypeShell extends StatefulWidget {
   /// Creates the shell with its discovery data source.
   const new({
