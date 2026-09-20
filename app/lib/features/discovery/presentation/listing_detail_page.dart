@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:pangankita/app/pangan_kita_theme.dart';
 import 'package:pangankita/features/discovery/domain/listing.dart';
@@ -14,6 +12,7 @@ class ListingDetailPage extends StatefulWidget {
     required this.listingId,
     required this.listings,
     required this.referenceTime,
+    required this.onReserve,
     super.key,
   });
 
@@ -25,6 +24,9 @@ class ListingDetailPage extends StatefulWidget {
 
   /// Injected time used to display the local availability boundary.
   final DateTime referenceTime;
+
+  /// Opens a review screen without creating the reservation yet.
+  final ValueChanged<Listing> onReserve;
 
   @override
   State<ListingDetailPage> createState() => _ListingDetailPageState();
@@ -89,6 +91,7 @@ class _ListingDetailPageState extends State<ListingDetailPage> {
         bottomNavigationBar: _ReservationBoundary(
           listing: listing,
           referenceTime: widget.referenceTime,
+          onReserve: widget.onReserve,
         ),
       );
     },
@@ -324,10 +327,15 @@ class _PickupLocation extends StatelessWidget {
 }
 
 class _ReservationBoundary extends StatelessWidget {
-  const new({required this.listing, required this.referenceTime});
+  const new({
+    required this.listing,
+    required this.referenceTime,
+    required this.onReserve,
+  });
 
   final Listing listing;
   final DateTime referenceTime;
+  final ValueChanged<Listing> onReserve;
 
   @override
   Widget build(BuildContext context) {
@@ -341,7 +349,7 @@ class _ReservationBoundary extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             ElevatedButton(
-              onPressed: available ? () => _showBoundary(context) : null,
+              onPressed: available ? () => onReserve(listing) : null,
               child: Text(
                 available
                     ? DiscoveryCopy.continueToReservation
@@ -353,24 +361,6 @@ class _ReservationBoundary extends StatelessWidget {
               DiscoveryCopy.payAtPickup,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodySmall,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void _showBoundary(BuildContext context) {
-    unawaited(
-      showDialog<void>(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text(DiscoveryCopy.reservationUnavailable),
-          content: const Text(DiscoveryCopy.reservationBoundary),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text(DiscoveryCopy.understood),
             ),
           ],
         ),

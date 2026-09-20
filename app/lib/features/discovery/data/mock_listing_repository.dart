@@ -11,16 +11,60 @@ class MockListingRepository implements ListingRepository {
   static const prototypeArea = 'Tebet Barat, Jakarta Selatan';
 
   final List<Listing> _listings;
+  final Map<String, int> _heldQuantities = {};
 
   @override
-  Future<List<Listing>> loadListings() async => _listings;
+  Future<List<Listing>> loadListings() async =>
+      List<Listing>.unmodifiable(_listings.map(_withCurrentQuantity));
 
   @override
   Future<Listing?> getListing(String id) async {
     for (final listing in _listings) {
-      if (listing.id == id) return listing;
+      if (listing.id == id) return _withCurrentQuantity(listing);
     }
     return null;
+  }
+
+  /// Holds local demo stock atomically and returns the pre-hold snapshot.
+  Listing? reserve(String id, int quantity, DateTime now) {
+    if (quantity <= 0) return null;
+    for (final listing in _listings) {
+      if (listing.id != id) continue;
+      final current = _withCurrentQuantity(listing);
+      if (!listing.offer.pickupDeadline.isAfter(now) ||
+          current.offer.availableQuantity < quantity) {
+        return null;
+      }
+      _heldQuantities[id] = (_heldQuantities[id] ?? 0) + quantity;
+      return current;
+    }
+    return null;
+  }
+
+  /// Releases a cancelled local demo hold.
+  void release(String id, int quantity) {
+    final held = _heldQuantities[id] ?? 0;
+    if (quantity <= 0 || quantity > held) throw StateError('Invalid hold');
+    _heldQuantities[id] = held - quantity;
+  }
+
+  Listing _withCurrentQuantity(Listing listing) {
+    final offer = listing.offer;
+    return Listing(
+      id: listing.id,
+      name: listing.name,
+      category: listing.category,
+      content: listing.content,
+      merchant: listing.merchant,
+      offer: ListingOffer(
+        priceRupiah: offer.priceRupiah,
+        originalPriceRupiah: offer.originalPriceRupiah,
+        availableQuantity:
+            offer.availableQuantity - (_heldQuantities[listing.id] ?? 0),
+        pickupStartsAt: offer.pickupStartsAt,
+        pickupDeadline: offer.pickupDeadline,
+      ),
+    );
   }
 }
 
