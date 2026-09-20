@@ -100,8 +100,12 @@ class _ListingPreviewPageState extends State<ListingPreviewPage> {
               formatRupiah(draft.priceRupiah),
               style: Theme.of(context).textTheme.headlineSmall,
             ),
-            Text('Harga asli ${formatRupiah(draft.originalPriceRupiah)}'),
-            Text('${draft.quantity} paket tersedia'),
+            Text(
+              BusinessCopy.originalPricePreview(
+                formatRupiah(draft.originalPriceRupiah),
+              ),
+            ),
+            Text(BusinessCopy.packagesAvailable(draft.quantity)),
             const SizedBox(height: PanganKitaSpacing.md),
             Text(
               '${BusinessCopy.pickupStart}: '

@@ -171,7 +171,7 @@ class _ReservationSection extends StatelessWidget {
             subtitle: Text(
               '${ReservationCopy.status(reservation.status)} · '
               '${reservation.listing.merchant.name}\n'
-              'Pickup sebelum '
+              '${ReservationCopy.pickupBefore} '
               '${formatPickupTime(reservation.listing.offer.pickupDeadline)}',
             ),
             isThreeLine: true,

@@ -84,7 +84,11 @@ class _BusinessListingsPageState extends State<BusinessListingsPage> {
       future: _future,
       builder: (context, snapshot) {
         if (!snapshot.hasData && !snapshot.hasError) {
-          return const Center(child: CircularProgressIndicator());
+          return const Center(
+            child: CircularProgressIndicator(
+              semanticsLabel: BusinessCopy.loading,
+            ),
+          );
         }
         if (snapshot.hasError) {
           return Center(
@@ -221,9 +225,9 @@ class _DashboardMetrics extends StatelessWidget {
       spacing: PanganKitaSpacing.md,
       runSpacing: PanganKitaSpacing.sm,
       children: [
-        Text('${active.length} listing aktif'),
-        Text('$waitingCount reservasi aktif'),
-        Text('$completed paket selesai'),
+        Text(BusinessCopy.activeListings(active.length)),
+        Text(BusinessCopy.activeReservations(waitingCount)),
+        Text(BusinessCopy.completedPackages(completed)),
       ],
     );
   }
@@ -242,7 +246,9 @@ class _PickupQueueCard extends StatelessWidget {
       child: ListTile(
         onTap: () => onOpen(reservation.id),
         title: Text(reservation.listing.name),
-        subtitle: Text('${reservation.quantity} paket · $deadline'),
+        subtitle: Text(
+          BusinessCopy.pickupQueueSummary(reservation.quantity, deadline),
+        ),
         trailing: const Icon(Icons.chevron_right),
       ),
     );

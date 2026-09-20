@@ -107,7 +107,7 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.text('Mode Bisnis'));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Reservations'));
+    await tester.tap(find.text('Reservasi'));
     await tester.pumpAndSettle();
     expect(find.text('Paket roti sore'), findsOneWidget);
     await tester.tap(find.text('Paket roti sore'));
@@ -121,13 +121,13 @@ void main() {
 
     await tester.pageBack();
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Impact'));
+    await tester.tap(find.text('Dampak'));
     await tester.pumpAndSettle();
     expect(find.text('1 reservasi selesai'), findsOneWidget);
     expect(find.text('1 paket pickup selesai'), findsOneWidget);
     await tester.tap(find.text('Mode Konsumen'));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Reservations'));
+    await tester.tap(find.text('Reservasi'));
     await tester.pumpAndSettle();
     expect(find.text('Paket roti sore'), findsOneWidget);
     expect(find.textContaining('Selesai ·'), findsOneWidget);

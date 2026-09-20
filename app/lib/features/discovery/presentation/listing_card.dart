@@ -98,16 +98,9 @@ class _ListingSummary extends StatelessWidget {
           children: [
             Text(
               listing.merchant.name,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
               style: Theme.of(context).textTheme.bodySmall,
             ),
-            Text(
-              listing.name,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
+            Text(listing.name, style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: PanganKitaSpacing.sm),
             Wrap(
               spacing: PanganKitaSpacing.sm,
