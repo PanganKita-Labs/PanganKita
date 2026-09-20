@@ -33,6 +33,7 @@ class ReservationDetailPage extends StatefulWidget {
 class _ReservationDetailPageState extends State<ReservationDetailPage> {
   Future<Reservation?>? _future;
   String? _error;
+  bool _saving = false;
 
   @override
   void initState() {
@@ -50,6 +51,11 @@ class _ReservationDetailPageState extends State<ReservationDetailPage> {
   }
 
   Future<void> _apply(Future<Reservation> Function(String) action) async {
+    if (_saving) return;
+    setState(() {
+      _saving = true;
+      _error = null;
+    });
     try {
       final updated = await action(widget.reservationId);
       if (!mounted) return;
@@ -70,6 +76,8 @@ class _ReservationDetailPageState extends State<ReservationDetailPage> {
         _future = widget.reservations.getReservation(widget.reservationId);
         _error = ReservationCopy.actionError;
       });
+    } finally {
+      if (mounted) setState(() => _saving = false);
     }
   }
 
@@ -132,6 +140,7 @@ class _ReservationDetailPageState extends State<ReservationDetailPage> {
         return _ReservationBody(
           reservation: reservation,
           error: _error,
+          saving: _saving,
           onReady: () => unawaited(_apply(widget.reservations.markReady)),
           onComplete: () => unawaited(_apply(widget.reservations.complete)),
           onCancel: () => unawaited(_cancel()),
@@ -147,6 +156,7 @@ class _ReservationBody extends StatelessWidget {
     required this.onReady,
     required this.onComplete,
     required this.onCancel,
+    required this.saving,
     this.error,
   });
 
@@ -155,6 +165,7 @@ class _ReservationBody extends StatelessWidget {
   final VoidCallback onComplete;
   final VoidCallback onCancel;
   final String? error;
+  final bool saving;
 
   @override
   Widget build(BuildContext context) {
@@ -172,6 +183,7 @@ class _ReservationBody extends StatelessWidget {
           ],
           _DemoActions(
             status: reservation.status,
+            saving: saving,
             onReady: onReady,
             onComplete: onComplete,
             onCancel: onCancel,
@@ -265,9 +277,11 @@ class _DemoActions extends StatelessWidget {
     required this.onReady,
     required this.onComplete,
     required this.onCancel,
+    required this.saving,
   });
 
   final ReservationStatus status;
+  final bool saving;
   final VoidCallback onReady;
   final VoidCallback onComplete;
   final VoidCallback onCancel;
@@ -289,17 +303,17 @@ class _DemoActions extends StatelessWidget {
         const SizedBox(height: PanganKitaSpacing.sm),
         if (status == ReservationStatus.reserved) ...[
           ElevatedButton(
-            onPressed: onReady,
+            onPressed: saving ? null : onReady,
             child: const Text(ReservationCopy.simulateReady),
           ),
           TextButton(
-            onPressed: onCancel,
+            onPressed: saving ? null : onCancel,
             child: const Text(ReservationCopy.cancel),
           ),
         ],
         if (status == ReservationStatus.readyForPickup)
           ElevatedButton(
-            onPressed: onComplete,
+            onPressed: saving ? null : onComplete,
             child: const Text(ReservationCopy.simulateComplete),
           ),
       ],

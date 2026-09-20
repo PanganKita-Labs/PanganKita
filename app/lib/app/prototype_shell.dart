@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pangankita/app/pangan_kita_copy.dart';
 import 'package:pangankita/app/pangan_kita_theme.dart';
 import 'package:pangankita/features/business/presentation/business_impact_page.dart';
 import 'package:pangankita/features/business/presentation/business_listing_detail_page.dart';
@@ -60,16 +61,16 @@ class _PrototypeShellState extends State<PrototypeShell> {
   int _inventoryRevision = 0;
 
   static const List<({String label, IconData icon})> _consumerTabs = [
-    (label: 'Discover', icon: Icons.search),
-    (label: 'Reservations', icon: Icons.bookmark_outline),
-    (label: 'Impact', icon: Icons.insights_outlined),
-    (label: 'Profile', icon: Icons.person_outline),
+    (label: PanganKitaCopy.discover, icon: Icons.search),
+    (label: PanganKitaCopy.reservations, icon: Icons.bookmark_outline),
+    (label: PanganKitaCopy.impact, icon: Icons.insights_outlined),
+    (label: PanganKitaCopy.profile, icon: Icons.person_outline),
   ];
   static const List<({String label, IconData icon})> _businessTabs = [
-    (label: 'Listings', icon: Icons.storefront_outlined),
-    (label: 'Reservations', icon: Icons.bookmark_outline),
-    (label: 'Impact', icon: Icons.insights_outlined),
-    (label: 'Business', icon: Icons.business_outlined),
+    (label: PanganKitaCopy.listings, icon: Icons.storefront_outlined),
+    (label: PanganKitaCopy.reservations, icon: Icons.bookmark_outline),
+    (label: PanganKitaCopy.impact, icon: Icons.insights_outlined),
+    (label: PanganKitaCopy.business, icon: Icons.business_outlined),
   ];
 
   void _switchRole() {
@@ -195,8 +196,8 @@ class _PrototypeShellState extends State<PrototypeShell> {
             onPressed: _switchRole,
             child: Text(
               _role == _PrototypeRole.consumer
-                  ? 'Mode Bisnis'
-                  : 'Mode Konsumen',
+                  ? PanganKitaCopy.businessMode
+                  : PanganKitaCopy.consumerMode,
             ),
           ),
         ],
@@ -270,7 +271,7 @@ class _PrototypeDestination extends StatelessWidget {
           children: [
             Text(title, style: Theme.of(context).textTheme.headlineMedium),
             const SizedBox(height: PanganKitaSpacing.sm),
-            const Text('Halaman sementara untuk fondasi prototipe.'),
+            const Text(PanganKitaCopy.temporaryPage),
           ],
         ),
       ),

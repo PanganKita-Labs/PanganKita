@@ -30,6 +30,9 @@ abstract final class BusinessCopy {
   /// Data loading failure.
   static const loadError = 'Data bisnis contoh belum bisa dimuat.';
 
+  /// Accessible description of a pending business data load.
+  static const loading = 'Memuat data bisnis contoh…';
+
   /// Retry action.
   static const retry = 'Coba lagi';
 
@@ -167,6 +170,40 @@ abstract final class BusinessCopy {
 
   /// Operational summary title.
   static const impactTitle = 'Ringkasan operasional';
+
+  /// Count of currently active merchant listings.
+  static String activeListings(int count) => '$count listing aktif';
+
+  /// Count of reservations awaiting pickup.
+  static String activeReservations(int count) => '$count reservasi aktif';
+
+  /// Count of completed local pickup packages.
+  static String completedPackages(int count) => '$count paket selesai';
+
+  /// Count of completed local reservations.
+  static String completedReservations(int count) => '$count reservasi selesai';
+
+  /// Count of completed local pickup packages on the summary page.
+  static String completedPickupPackages(int count) =>
+      '$count paket pickup selesai';
+
+  /// Count of packages still available across active listings.
+  static String availablePackages(int count) =>
+      '$count paket tersedia di listing aktif';
+
+  /// Count of listings beyond the local pickup deadline.
+  static String expiredListings(int count) =>
+      '$count listing lewat batas pickup';
+
+  /// Seller's original price displayed on the preview.
+  static String originalPricePreview(String price) => 'Harga asli $price';
+
+  /// Package availability displayed on the preview.
+  static String packagesAvailable(int count) => '$count paket tersedia';
+
+  /// Quantity and deadline in a merchant pickup queue.
+  static String pickupQueueSummary(int quantity, String deadline) =>
+      '$quantity paket · $deadline';
 
   /// Explains that the displayed facts are local calculations.
   static const impactNotice =

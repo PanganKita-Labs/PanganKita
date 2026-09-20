@@ -63,13 +63,29 @@ class _BusinessReservationsPageState extends State<BusinessReservationsPage> {
       future: _future,
       builder: (context, snapshot) {
         if (!snapshot.hasData && !snapshot.hasError) {
-          return const Center(child: CircularProgressIndicator());
+          return const Center(
+            child: CircularProgressIndicator(
+              semanticsLabel: BusinessCopy.loading,
+            ),
+          );
         }
         if (snapshot.hasError) {
           return Center(
-            child: TextButton(
-              onPressed: _retry,
-              child: const Text(BusinessCopy.retry),
+            child: Padding(
+              padding: const EdgeInsets.all(PanganKitaSpacing.md),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    BusinessCopy.loadError,
+                    textAlign: TextAlign.center,
+                  ),
+                  TextButton(
+                    onPressed: _retry,
+                    child: const Text(BusinessCopy.retry),
+                  ),
+                ],
+              ),
             ),
           );
         }

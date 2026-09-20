@@ -23,16 +23,16 @@ void main() {
       })?.color,
       Colors.white,
     );
-    expect(find.text('Discover'), findsWidgets);
+    expect(find.text('Jelajahi'), findsWidgets);
     expect(find.text('Paket pastry pilihan'), findsOneWidget);
 
     await tester.tap(find.text('Mode Bisnis'));
     await tester.pumpAndSettle();
-    expect(find.text('Listings'), findsWidgets);
-    expect(find.text('Business'), findsOneWidget);
+    expect(find.text('Listing'), findsWidgets);
+    expect(find.text('Bisnis'), findsOneWidget);
 
     await tester.tap(find.text('Mode Konsumen'));
     await tester.pumpAndSettle();
-    expect(find.text('Discover'), findsWidgets);
+    expect(find.text('Jelajahi'), findsWidgets);
   });
 }

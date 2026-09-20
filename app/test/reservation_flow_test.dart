@@ -145,7 +145,7 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Reservations'));
+    await tester.tap(find.text('Reservasi'));
     await tester.pumpAndSettle();
     expect(find.text('Belum ada reservasi contoh.'), findsOneWidget);
 
