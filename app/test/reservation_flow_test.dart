@@ -8,7 +8,7 @@ import 'package:pangankita/features/reservations/presentation/reservation_detail
 void main() {
   final now = DateTime(2026, 9, 19, 18);
 
-  testWidgets('consumer can reserve two packages and finish the demo pickup', (
+  testWidgets('consumer reserves two packages and sees the pickup code', (
     tester,
   ) async {
     tester.view.physicalSize = const Size(390, 844);
@@ -54,22 +54,12 @@ void main() {
       1,
     );
 
-    await tester.scrollUntilVisible(find.text('Simulasikan penjual siap'), 180);
-    await tester.tap(find.text('Simulasikan penjual siap'));
-    await tester.pumpAndSettle();
-    expect(find.text('Siap diambil'), findsOneWidget);
-    await tester.scrollUntilVisible(
-      find.text('Simulasikan pickup selesai'),
-      180,
-    );
-    await tester.tap(find.text('Simulasikan pickup selesai'));
-    await tester.pumpAndSettle();
-    expect(find.text('Selesai'), findsOneWidget);
+    expect(find.text('Simulasikan penjual siap'), findsNothing);
     expect(find.text('Simulasikan pickup selesai'), findsNothing);
 
     await tester.pageBack();
     await tester.pumpAndSettle();
-    expect(find.text('Riwayat'), findsOneWidget);
+    expect(find.text('Aktif'), findsOneWidget);
     expect(find.text('Paket pastry pilihan'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
@@ -163,6 +153,6 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Lewat batas pickup'), findsOneWidget);
     expect(find.textContaining('Pickup sebelum'), findsOneWidget);
-    expect(find.text('Simulasikan penjual siap'), findsNothing);
+    expect(find.text('Batalkan reservasi contoh'), findsNothing);
   });
 }

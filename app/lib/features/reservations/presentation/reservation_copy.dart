@@ -91,21 +91,12 @@ abstract final class ReservationCopy {
 
   /// Explains the code's limited meaning.
   static const codeNotice =
-      'Kode demo lokal; bukan token aman dan tidak dipindai penjual.';
+      'Kode demo lokal; bukan token aman atau bukti pickup nyata.';
 
   /// Pickup instruction without claiming merchant confirmation.
   static const instruction =
-      'Tunjukkan kode contoh saat mencoba alur pickup. '
+      'Tunjukkan kode contoh di Mode Bisnis untuk simulasi verifikasi pickup. '
       'Pembayaran dilakukan langsung kepada penjual pada alur nyata.';
-
-  /// Demo-only state controls heading.
-  static const demoControls = 'Kontrol simulasi lokal';
-
-  /// Simulates a merchant readiness event without business UI.
-  static const simulateReady = 'Simulasikan penjual siap';
-
-  /// Simulates pickup verification without a real merchant action.
-  static const simulateComplete = 'Simulasikan pickup selesai';
 
   /// Consumer cancellation action.
   static const cancel = 'Batalkan reservasi contoh';

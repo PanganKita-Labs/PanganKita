@@ -75,8 +75,7 @@ class MockReservationRepository implements ReservationRepository {
     to: ReservationStatus.readyForPickup,
   );
 
-  @override
-  Future<Reservation> complete(String id) async {
+  Reservation _complete(String id) {
     final completed = _transition(
       id,
       from: ReservationStatus.readyForPickup,
@@ -100,7 +99,7 @@ class MockReservationRepository implements ReservationRepository {
       throw const ReservationException(ReservationFailure.invalidCode);
     }
     if (reservation.status == ReservationStatus.completed) return reservation;
-    return await complete(id);
+    return _complete(id);
   }
 
   @override

@@ -16,7 +16,6 @@ import 'package:pangankita/features/discovery/presentation/listing_card.dart';
 import 'package:pangankita/features/reservations/data/mock_reservation_repository.dart';
 import 'package:pangankita/features/reservations/domain/reservation.dart';
 import 'package:pangankita/features/reservations/presentation/reservation_copy.dart';
-import 'package:pangankita/features/reservations/presentation/reservation_detail_page.dart';
 
 void main() {
   final now = DateTime(2026, 9, 19, 18);
@@ -250,7 +249,7 @@ void main() {
     semantics.dispose();
   });
 
-  testWidgets('consumer transition is disabled while a save is pending', (
+  testWidgets('merchant readiness action is disabled while pending', (
     tester,
   ) async {
     final listings = MockListingRepository(referenceTime: now, now: () => now);
@@ -258,18 +257,16 @@ void main() {
     final created = await reservations.create('sample-bread', 1);
     await tester.pumpWidget(
       MaterialApp(
-        home: ReservationDetailPage(
+        home: BusinessReservationDetailPage(
           reservationId: created.id,
+          merchantId: MockListingRepository.prototypeMerchant.id,
           reservations: reservations,
           onChanged: () {},
         ),
       ),
     );
     await tester.pumpAndSettle();
-    final ready = find.widgetWithText(
-      ElevatedButton,
-      ReservationCopy.simulateReady,
-    );
+    final ready = find.widgetWithText(ElevatedButton, BusinessCopy.markReady);
     await tester.scrollUntilVisible(ready, 160);
     await tester.ensureVisible(ready);
     await tester.tap(ready);

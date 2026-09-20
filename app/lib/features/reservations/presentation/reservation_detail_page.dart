@@ -141,8 +141,6 @@ class _ReservationDetailPageState extends State<ReservationDetailPage> {
           reservation: reservation,
           error: _error,
           saving: _saving,
-          onReady: () => unawaited(_apply(widget.reservations.markReady)),
-          onComplete: () => unawaited(_apply(widget.reservations.complete)),
           onCancel: () => unawaited(_cancel()),
         );
       },
@@ -153,16 +151,12 @@ class _ReservationDetailPageState extends State<ReservationDetailPage> {
 class _ReservationBody extends StatelessWidget {
   const new({
     required this.reservation,
-    required this.onReady,
-    required this.onComplete,
     required this.onCancel,
     required this.saving,
     this.error,
   });
 
   final Reservation reservation;
-  final VoidCallback onReady;
-  final VoidCallback onComplete;
   final VoidCallback onCancel;
   final String? error;
   final bool saving;
@@ -181,11 +175,9 @@ class _ReservationBody extends StatelessWidget {
               style: TextStyle(color: Theme.of(context).colorScheme.error),
             ),
           ],
-          _DemoActions(
+          _CancellationAction(
             status: reservation.status,
             saving: saving,
-            onReady: onReady,
-            onComplete: onComplete,
             onCancel: onCancel,
           ),
         ],
@@ -271,51 +263,30 @@ class _PickupInformation extends StatelessWidget {
   }
 }
 
-class _DemoActions extends StatelessWidget {
+class _CancellationAction extends StatelessWidget {
   const new({
     required this.status,
-    required this.onReady,
-    required this.onComplete,
     required this.onCancel,
     required this.saving,
   });
 
   final ReservationStatus status;
   final bool saving;
-  final VoidCallback onReady;
-  final VoidCallback onComplete;
   final VoidCallback onCancel;
 
   @override
   Widget build(BuildContext context) {
-    if (status != ReservationStatus.reserved &&
-        status != ReservationStatus.readyForPickup) {
+    if (status != ReservationStatus.reserved) {
       return const SizedBox.shrink();
     }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: PanganKitaSpacing.lg),
-        Text(
-          ReservationCopy.demoControls,
-          style: Theme.of(context).textTheme.titleMedium,
+        TextButton(
+          onPressed: saving ? null : onCancel,
+          child: const Text(ReservationCopy.cancel),
         ),
-        const SizedBox(height: PanganKitaSpacing.sm),
-        if (status == ReservationStatus.reserved) ...[
-          ElevatedButton(
-            onPressed: saving ? null : onReady,
-            child: const Text(ReservationCopy.simulateReady),
-          ),
-          TextButton(
-            onPressed: saving ? null : onCancel,
-            child: const Text(ReservationCopy.cancel),
-          ),
-        ],
-        if (status == ReservationStatus.readyForPickup)
-          ElevatedButton(
-            onPressed: saving ? null : onComplete,
-            child: const Text(ReservationCopy.simulateComplete),
-          ),
       ],
     );
   }
