@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:pangankita/app/pangan_kita_copy.dart';
 import 'package:pangankita/app/pangan_kita_theme.dart';
 import 'package:pangankita/features/business/presentation/business_impact_page.dart';
@@ -21,6 +22,8 @@ import 'package:pangankita/features/reservations/presentation/reservations_page.
 
 /// Local-only prototype roles; these do not grant authorization.
 enum _PrototypeRole { consumer, business }
+
+enum _HeaderAction { profile, switchRole }
 
 /// Navigation shell for the local consumer and business prototype.
 class PrototypeShell extends StatefulWidget {
@@ -54,23 +57,24 @@ class PrototypeShell extends StatefulWidget {
 }
 
 class _PrototypeShellState extends State<PrototypeShell> {
-  static const _logoSize = 48.0;
+  static const _profileTabIndex = 3;
+  static const _headerHeight = 64.0;
 
   _PrototypeRole _role = _PrototypeRole.consumer;
   int _selectedIndex = 0;
   int _inventoryRevision = 0;
 
   static const List<({String label, IconData icon})> _consumerTabs = [
-    (label: PanganKitaCopy.discover, icon: Icons.search),
-    (label: PanganKitaCopy.reservations, icon: Icons.bookmark_outline),
-    (label: PanganKitaCopy.impact, icon: Icons.insights_outlined),
-    (label: PanganKitaCopy.profile, icon: Icons.person_outline),
+    (label: PanganKitaCopy.discover, icon: Symbols.storefront),
+    (label: PanganKitaCopy.reservations, icon: Symbols.receipt_long),
+    (label: PanganKitaCopy.impact, icon: Symbols.eco),
+    (label: PanganKitaCopy.profile, icon: Symbols.person),
   ];
   static const List<({String label, IconData icon})> _businessTabs = [
-    (label: PanganKitaCopy.listings, icon: Icons.storefront_outlined),
-    (label: PanganKitaCopy.reservations, icon: Icons.bookmark_outline),
-    (label: PanganKitaCopy.impact, icon: Icons.insights_outlined),
-    (label: PanganKitaCopy.business, icon: Icons.business_outlined),
+    (label: PanganKitaCopy.listings, icon: Symbols.storefront),
+    (label: PanganKitaCopy.reservations, icon: Symbols.receipt_long),
+    (label: PanganKitaCopy.impact, icon: Symbols.eco),
+    (label: PanganKitaCopy.business, icon: Symbols.person),
   ];
 
   void _switchRole() {
@@ -81,6 +85,18 @@ class _PrototypeShellState extends State<PrototypeShell> {
       _selectedIndex = 0;
     });
   }
+
+  void _handleHeaderAction(_HeaderAction action) {
+    if (action == _HeaderAction.switchRole) {
+      _switchRole();
+      return;
+    }
+    setState(() => _selectedIndex = _profileTabIndex);
+  }
+
+  void _showUnavailable(String message) => ScaffoldMessenger.of(context)
+    ..hideCurrentSnackBar()
+    ..showSnackBar(SnackBar(content: Text(message)));
 
   void _openListing(String id) {
     Navigator.of(context).push(
@@ -170,6 +186,7 @@ class _PrototypeShellState extends State<PrototypeShell> {
           reservationId: id,
           reservations: widget.reservations,
           onChanged: _dataChanged,
+          now: widget.now,
         ),
       ),
     );
@@ -181,25 +198,77 @@ class _PrototypeShellState extends State<PrototypeShell> {
         ? _consumerTabs
         : _businessTabs;
     final selected = tabs[_selectedIndex];
+    final switchLabel = _role == _PrototypeRole.consumer
+        ? PanganKitaCopy.businessMode
+        : PanganKitaCopy.consumerMode;
 
     return Scaffold(
       appBar: AppBar(
-        title: SizedBox.square(
-          dimension: _logoSize,
-          child: Image.asset(
-            'assets/brand/logo-primary.png',
-            semanticLabel: DiscoveryCopy.logoLabel,
-          ),
-        ),
+        toolbarHeight: _headerHeight,
+        title: const _BrandTitle(),
         actions: [
-          TextButton(
-            onPressed: _switchRole,
-            child: Text(
-              _role == _PrototypeRole.consumer
-                  ? PanganKitaCopy.businessMode
-                  : PanganKitaCopy.consumerMode,
+          _HeaderArea(
+            onPressed: () =>
+                _showUnavailable(DiscoveryCopy.locationUnavailable),
+          ),
+          IconButton(
+            tooltip: DiscoveryCopy.notifications,
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints.tightFor(width: 40, height: 40),
+            onPressed: () =>
+                _showUnavailable(DiscoveryCopy.notificationsUnavailable),
+            icon: const Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Icon(Symbols.notifications, size: 22),
+                Positioned(
+                  top: -1,
+                  right: 0,
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: PanganKitaColors.brandAccent,
+                      shape: BoxShape.circle,
+                    ),
+                    child: SizedBox.square(dimension: 8),
+                  ),
+                ),
+              ],
             ),
           ),
+          Semantics(
+            label: switchLabel,
+            button: true,
+            excludeSemantics: true,
+            child: PopupMenuButton<_HeaderAction>(
+              tooltip: switchLabel,
+              onSelected: _handleHeaderAction,
+              icon: const CircleAvatar(
+                radius: 16,
+                backgroundColor: PanganKitaColors.brandPrimary,
+                child: Icon(
+                  Symbols.person,
+                  size: 18,
+                  color: Colors.white,
+                  fill: 1,
+                ),
+              ),
+              itemBuilder: (context) => [
+                PopupMenuItem(
+                  value: _HeaderAction.profile,
+                  child: Text(
+                    _role == _PrototypeRole.consumer
+                        ? PanganKitaCopy.profile
+                        : PanganKitaCopy.business,
+                  ),
+                ),
+                PopupMenuItem(
+                  value: _HeaderAction.switchRole,
+                  child: Text(switchLabel),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: PanganKitaSpacing.sm),
         ],
       ),
       body: _role == _PrototypeRole.consumer
@@ -254,6 +323,96 @@ class _PrototypeShellState extends State<PrototypeShell> {
       ),
     );
   }
+}
+
+class _HeaderArea extends StatelessWidget {
+  const new({required this.onPressed});
+
+  static const _width = 140.0;
+  static const _height = 40.0;
+  static const _radius = 20.0;
+  static const _horizontalPadding = 10.0;
+
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) => SizedBox(
+    width: _width,
+    height: _height,
+    child: Material(
+      color: Colors.white,
+      borderRadius: const BorderRadius.all(Radius.circular(_radius)),
+      child: InkWell(
+        onTap: onPressed,
+        borderRadius: const BorderRadius.all(Radius.circular(_radius)),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: _horizontalPadding),
+          child: Row(
+            children: [
+              const Icon(
+                Symbols.near_me,
+                size: 16,
+                color: PanganKitaColors.brandAccent,
+              ),
+              const SizedBox(width: PanganKitaSpacing.xs),
+              Expanded(
+                child: Text(
+                  DiscoveryCopy.compactArea,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.labelMedium,
+                ),
+              ),
+              const Icon(Symbols.expand_more, size: 16),
+            ],
+          ),
+        ),
+      ),
+    ),
+  );
+}
+
+class _BrandTitle extends StatelessWidget {
+  const new();
+
+  static const _logoSize = 36.0;
+  static const _minWordmarkWidth = 140.0;
+  static const _maxWordmarkTextScale = 1.3;
+
+  @override
+  Widget build(BuildContext context) => LayoutBuilder(
+    builder: (context, constraints) => Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        SizedBox.square(
+          dimension: constraints.maxWidth < _logoSize
+              ? constraints.maxWidth
+              : _logoSize,
+          child: Image.asset(
+            'assets/brand/logo-primary.png',
+            semanticLabel: DiscoveryCopy.logoLabel,
+          ),
+        ),
+        if (constraints.maxWidth >= _minWordmarkWidth &&
+            MediaQuery.textScalerOf(context).scale(1) <=
+                _maxWordmarkTextScale) ...[
+          const SizedBox(width: PanganKitaSpacing.sm),
+          Flexible(
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                PanganKitaCopy.appName,
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  color: PanganKitaColors.brandPrimaryStrong,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ],
+    ),
+  );
 }
 
 class _PrototypeDestination extends StatelessWidget {

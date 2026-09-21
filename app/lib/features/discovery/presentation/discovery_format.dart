@@ -25,3 +25,15 @@ String formatPickupTime(DateTime time) {
   final minute = time.minute.toString().padLeft(2, '0');
   return '$day/$month $hour.$minute';
 }
+
+/// Whole minutes until pickup closes, using the caller's reference clock.
+String formatRemainingTime(DateTime deadline, DateTime referenceTime) {
+  final minutes =
+      (deadline.difference(referenceTime).inSeconds / Duration.secondsPerMinute)
+          .ceil();
+  if (minutes <= 0) return 'Batas pickup telah lewat';
+  if (minutes < Duration.minutesPerHour) return '$minutes mnt lagi';
+  final hours = minutes ~/ Duration.minutesPerHour;
+  final remainder = minutes % Duration.minutesPerHour;
+  return remainder == 0 ? '$hours jam lagi' : '$hours jam $remainder mnt lagi';
+}

@@ -48,7 +48,7 @@ void main() {
       );
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull, reason: '$width px consumer');
-      expect(find.text('Jelajahi'), findsOneWidget);
+      expect(find.text('Eksplor'), findsOneWidget);
       for (var index = 0; index < 4; index++) {
         await tester.tap(find.byType(NavigationDestination).at(index));
         await tester.pumpAndSettle();
@@ -64,8 +64,7 @@ void main() {
           reason: '$width px consumer tab $index',
         );
       }
-      await tester.tap(find.text('Mode Bisnis'));
-      await tester.pumpAndSettle();
+      await _switchRole(tester, 'Mode Bisnis');
       expect(tester.takeException(), isNull, reason: '$width px business');
       expect(find.text('Listing'), findsOneWidget);
       for (var index = 0; index < 4; index++) {
@@ -83,8 +82,7 @@ void main() {
           reason: '$width px business tab $index',
         );
       }
-      await tester.tap(find.text('Mode Konsumen'));
-      await tester.pumpAndSettle();
+      await _switchRole(tester, 'Mode Konsumen');
       expect(tester.takeException(), isNull, reason: '$width px role switch');
     }
   });
@@ -108,7 +106,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.bySemanticsLabel(DiscoveryCopy.logoLabel), findsOneWidget);
     expect(find.bySemanticsLabel(DiscoveryCopy.searchLabel), findsOneWidget);
-    expect(find.bySemanticsLabel('Mode Bisnis'), findsOneWidget);
+    expect(find.byTooltip('Mode Bisnis'), findsOneWidget);
     semantics.dispose();
   });
 
@@ -147,7 +145,11 @@ void main() {
           body: MediaQuery(
             data: const MediaQueryData(textScaler: TextScaler.linear(1.6)),
             child: SingleChildScrollView(
-              child: ListingCard(listing: listing, onTap: () {}),
+              child: ListingCard(
+                listing: listing,
+                referenceTime: now,
+                onTap: () {},
+              ),
             ),
           ),
         ),
@@ -280,6 +282,13 @@ void main() {
       findsOneWidget,
     );
   });
+}
+
+Future<void> _switchRole(WidgetTester tester, String label) async {
+  await tester.tap(find.byTooltip(label));
+  await tester.pumpAndSettle();
+  await tester.tap(find.text(label));
+  await tester.pumpAndSettle();
 }
 
 class _FailingReservations extends MockReservationRepository {

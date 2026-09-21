@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:pangankita/app/pangan_kita_theme.dart';
 import 'package:pangankita/features/business/presentation/business_copy.dart';
 import 'package:pangankita/features/business/presentation/listing_preview_page.dart';
@@ -35,6 +36,8 @@ class CreateListingPage extends StatefulWidget {
 }
 
 class _CreateListingPageState extends State<CreateListingPage> {
+  static const _descriptionLines = 3;
+
   final _formKey = GlobalKey<FormState>();
   final _name = TextEditingController();
   final _description = TextEditingController();
@@ -172,6 +175,16 @@ class _CreateListingPageState extends State<CreateListingPage> {
         child: ListView(
           padding: const EdgeInsets.all(PanganKitaSpacing.md),
           children: [
+            Text(
+              BusinessCopy.createHeading,
+              style: Theme.of(context).textTheme.headlineMedium,
+            ),
+            const Text(BusinessCopy.createSubtitle),
+            const SizedBox(height: PanganKitaSpacing.md),
+            Text(
+              BusinessCopy.foodDetails,
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
             const Text(BusinessCopy.demoNotice),
             const SizedBox(height: PanganKitaSpacing.md),
             _BusinessTextField(controller: _name, label: BusinessCopy.name),
@@ -194,6 +207,12 @@ class _CreateListingPageState extends State<CreateListingPage> {
             _BusinessTextField(
               controller: _description,
               label: BusinessCopy.description,
+              maxLines: _descriptionLines,
+            ),
+            const SizedBox(height: PanganKitaSpacing.md),
+            Text(
+              BusinessCopy.offerDetails,
+              style: Theme.of(context).textTheme.titleMedium,
             ),
             _BusinessTextField(
               controller: _originalPrice,
@@ -214,15 +233,17 @@ class _CreateListingPageState extends State<CreateListingPage> {
               validator: _positiveNumber,
             ),
             ListTile(
+              leading: const Icon(Symbols.schedule),
               title: const Text(BusinessCopy.pickupStart),
               subtitle: Text(formatPickupTime(_start)),
-              trailing: const Icon(Icons.edit_calendar),
+              trailing: const Icon(Symbols.edit_calendar),
               onTap: () => _pickDateTime(deadline: false),
             ),
             ListTile(
+              leading: const Icon(Symbols.schedule),
               title: const Text(BusinessCopy.pickupDeadline),
               subtitle: Text(formatPickupTime(_deadline)),
-              trailing: const Icon(Icons.edit_calendar),
+              trailing: const Icon(Symbols.edit_calendar),
               onTap: () => _pickDateTime(deadline: true),
             ),
             if (_timeError case final message?)
@@ -230,6 +251,11 @@ class _CreateListingPageState extends State<CreateListingPage> {
                 message,
                 style: TextStyle(color: Theme.of(context).colorScheme.error),
               ),
+            const SizedBox(height: PanganKitaSpacing.md),
+            Text(
+              BusinessCopy.sellerDetails,
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
             _SellerFields(
               reason: _reason,
               condition: _condition,
@@ -237,6 +263,7 @@ class _CreateListingPageState extends State<CreateListingPage> {
               allergens: _allergens,
               onPreview: _preview,
             ),
+            SizedBox(height: MediaQuery.viewInsetsOf(context).bottom),
           ],
         ),
       ),
@@ -254,10 +281,25 @@ class _ListingPhoto extends StatelessWidget {
   Widget build(BuildContext context) => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      Image.asset(
-        BusinessCopy.imageAsset(category),
-        height: _imageHeight,
-        fit: BoxFit.cover,
+      Stack(
+        alignment: Alignment.bottomRight,
+        children: [
+          Image.asset(
+            BusinessCopy.imageAsset(category),
+            height: _imageHeight,
+            fit: BoxFit.cover,
+          ),
+          const Padding(
+            padding: EdgeInsets.all(PanganKitaSpacing.sm),
+            child: CircleAvatar(
+              backgroundColor: Colors.white,
+              child: Icon(
+                Symbols.photo_camera,
+                color: PanganKitaColors.brandPrimary,
+              ),
+            ),
+          ),
+        ],
       ),
       const Text(BusinessCopy.photoNotice),
     ],
@@ -295,9 +337,10 @@ class _SellerFields extends StatelessWidget {
         optional: true,
       ),
       const SizedBox(height: PanganKitaSpacing.lg),
-      ElevatedButton(
+      ElevatedButton.icon(
         onPressed: onPreview,
-        child: const Text(BusinessCopy.preview),
+        icon: const Icon(Symbols.publish),
+        label: const Text(BusinessCopy.preview),
       ),
     ],
   );
@@ -309,6 +352,7 @@ class _BusinessTextField extends StatelessWidget {
     required this.label,
     this.optional = false,
     this.numeric = false,
+    this.maxLines = 1,
     this.validator,
   });
 
@@ -316,6 +360,7 @@ class _BusinessTextField extends StatelessWidget {
   final String label;
   final bool optional;
   final bool numeric;
+  final int maxLines;
   final FormFieldValidator<String>? validator;
 
   String? _validate(String? value) {
@@ -331,6 +376,7 @@ class _BusinessTextField extends StatelessWidget {
     controller: controller,
     decoration: InputDecoration(labelText: label),
     keyboardType: numeric ? TextInputType.number : TextInputType.text,
+    maxLines: maxLines,
     inputFormatters: numeric ? [FilteringTextInputFormatter.digitsOnly] : null,
     validator: validator ?? _validate,
   );

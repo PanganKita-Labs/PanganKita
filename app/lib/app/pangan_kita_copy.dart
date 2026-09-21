@@ -1,7 +1,10 @@
 /// Bahasa Indonesia labels shared by the prototype shell.
 abstract final class PanganKitaCopy {
+  /// App name shown beside the official mark when space permits.
+  static const appName = 'PanganKita';
+
   /// Consumer discovery destination.
-  static const discover = 'Jelajahi';
+  static const discover = 'Eksplor';
 
   /// Reservation destination in both roles.
   static const reservations = 'Reservasi';

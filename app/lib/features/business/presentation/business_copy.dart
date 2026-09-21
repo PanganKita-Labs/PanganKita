@@ -6,6 +6,19 @@ abstract final class BusinessCopy {
   static const demoNotice =
       'Mode bisnis contoh. Perubahan hanya tersimpan selama aplikasi terbuka.';
 
+  /// Compact truthful identity qualifier used in the dashboard header.
+  static const demoIdentity = 'Bisnis contoh';
+
+  /// Compact replacement for the reference's unsupported verification badge.
+  static const demoBadge = 'Data contoh';
+
+  /// Notification action retained from the reference dashboard.
+  static const notifications = 'Notifikasi bisnis';
+
+  /// Explains the local prototype boundary for notifications.
+  static const notificationsUnavailable =
+      'Notifikasi bisnis belum tersedia pada prototipe.';
+
   /// Main listing creation action.
   static const createListing = 'Buat listing';
 
@@ -38,6 +51,22 @@ abstract final class BusinessCopy {
 
   /// Listing creation form title.
   static const formTitle = 'Buat listing surplus';
+
+  /// Heading above the local listing form.
+  static const createHeading = 'Bagikan makanan surplus hari ini';
+
+  /// Explains that form values feed the local prototype.
+  static const createSubtitle =
+      'Isi detail yang akan dilihat konsumen pada prototipe lokal.';
+
+  /// Food identity and image group.
+  static const foodDetails = 'Makanan dan foto';
+
+  /// Offer, inventory, and pickup group.
+  static const offerDetails = 'Harga, stok, dan waktu pickup';
+
+  /// Seller-provided information group.
+  static const sellerDetails = 'Informasi dari penjual';
 
   /// Consumer-facing preview title.
   static const previewTitle = 'Pratinjau listing';
@@ -182,6 +211,9 @@ abstract final class BusinessCopy {
 
   /// Count of completed local reservations.
   static String completedReservations(int count) => '$count reservasi selesai';
+
+  /// Empty recent-activity state.
+  static const emptyCompleted = 'Belum ada pickup selesai di demo lokal.';
 
   /// Count of completed local pickup packages on the summary page.
   static String completedPickupPackages(int count) =>

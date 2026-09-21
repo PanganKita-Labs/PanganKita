@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:pangankita/app/prototype_shell.dart';
 import 'package:pangankita/features/discovery/data/mock_listing_repository.dart';
 import 'package:pangankita/features/reservations/data/mock_reservation_repository.dart';
+import 'package:pangankita/features/reservations/presentation/reservation_copy.dart';
 import 'package:pangankita/features/reservations/presentation/reservation_detail_page.dart';
 
 void main() {
@@ -31,7 +32,11 @@ void main() {
     );
     await tester.pumpAndSettle();
 
+    await tester.ensureVisible(find.text('Paket pastry pilihan'));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('Paket pastry pilihan'));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text('Lanjut ke reservasi'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Lanjut ke reservasi'));
     await tester.pumpAndSettle();
@@ -53,6 +58,13 @@ void main() {
       (await listings.getListing('sample-bread'))?.offer.availableQuantity,
       1,
     );
+    await tester.scrollUntilVisible(
+      find.text(ReservationCopy.qrVisual),
+      180,
+      scrollable: find.byType(Scrollable).first,
+    );
+    expect(find.text(ReservationCopy.ticketTitle), findsOneWidget);
+    expect(find.text(ReservationCopy.qrVisual), findsOneWidget);
 
     expect(find.text('Simulasikan penjual siap'), findsNothing);
     expect(find.text('Simulasikan pickup selesai'), findsNothing);
@@ -86,7 +98,17 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    await tester.drag(find.byType(ListView).first, const Offset(0, -150));
+    await tester.scrollUntilVisible(
+      find.text('Paket pastry pilihan'),
+      150,
+      scrollable: find
+          .descendant(
+            of: find.byType(ListView).first,
+            matching: find.byType(Scrollable),
+          )
+          .first,
+    );
+    await tester.ensureVisible(find.text('Paket pastry pilihan'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Paket pastry pilihan'));
     await tester.pumpAndSettle();
@@ -96,15 +118,27 @@ void main() {
     await tester.tap(find.text('Konfirmasi reservasi contoh'));
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
+    final cancelButton = find.byKey(const Key('cancel-reservation'));
     await tester.scrollUntilVisible(
-      find.text('Batalkan reservasi contoh'),
+      cancelButton,
       180,
+      scrollable: find
+          .descendant(
+            of: find.byType(ListView).first,
+            matching: find.byType(Scrollable),
+          )
+          .first,
     );
-    await tester.ensureVisible(find.text('Batalkan reservasi contoh'));
+    await tester.ensureVisible(cancelButton);
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Batalkan reservasi contoh'));
+    await tester.tap(cancelButton);
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Batalkan reservasi contoh').last);
+    await tester.tap(
+      find.descendant(
+        of: find.byType(AlertDialog),
+        matching: find.text(ReservationCopy.cancel),
+      ),
+    );
     await tester.pumpAndSettle();
     expect(find.text('Dibatalkan'), findsOneWidget);
     expect(
@@ -147,6 +181,7 @@ void main() {
           reservationId: created.id,
           reservations: reservations,
           onChanged: () {},
+          now: () => current,
         ),
       ),
     );

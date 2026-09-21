@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:pangankita/app/pangan_kita_theme.dart';
 import 'package:pangankita/features/business/presentation/business_copy.dart';
 import 'package:pangankita/features/discovery/domain/listing.dart';
@@ -80,6 +81,10 @@ class _ListingPreviewPageState extends State<ListingPreviewPage> {
         child: ListView(
           padding: const EdgeInsets.all(PanganKitaSpacing.md),
           children: [
+            Text(
+              BusinessCopy.previewTitle,
+              style: Theme.of(context).textTheme.headlineMedium,
+            ),
             const Text(BusinessCopy.demoNotice),
             const SizedBox(height: PanganKitaSpacing.md),
             Image.asset(
@@ -89,36 +94,72 @@ class _ListingPreviewPageState extends State<ListingPreviewPage> {
             ),
             const Text(BusinessCopy.photoNotice),
             const SizedBox(height: PanganKitaSpacing.md),
-            Text(
-              draft.name.trim(),
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-            Text(draft.merchant.name),
-            Text(draft.description.trim()),
-            const SizedBox(height: PanganKitaSpacing.md),
-            Text(
-              formatRupiah(draft.priceRupiah),
-              style: Theme.of(context).textTheme.headlineSmall,
-            ),
-            Text(
-              BusinessCopy.originalPricePreview(
-                formatRupiah(draft.originalPriceRupiah),
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(PanganKitaSpacing.md),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      draft.merchant.name,
+                      style: Theme.of(context).textTheme.labelLarge,
+                    ),
+                    Text(
+                      draft.name.trim(),
+                      style: Theme.of(context).textTheme.headlineMedium,
+                    ),
+                    Text(draft.description.trim()),
+                    const SizedBox(height: PanganKitaSpacing.md),
+                    Wrap(
+                      spacing: PanganKitaSpacing.sm,
+                      children: [
+                        Text(
+                          formatRupiah(draft.priceRupiah),
+                          style: Theme.of(context).textTheme.headlineSmall
+                              ?.copyWith(
+                                color: PanganKitaColors.brandPrimaryStrong,
+                              ),
+                        ),
+                        Text(
+                          formatRupiah(draft.originalPriceRupiah),
+                          style: const TextStyle(
+                            decoration: TextDecoration.lineThrough,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Text(BusinessCopy.packagesAvailable(draft.quantity)),
+                  ],
+                ),
               ),
             ),
-            Text(BusinessCopy.packagesAvailable(draft.quantity)),
             const SizedBox(height: PanganKitaSpacing.md),
-            Text(
-              '${BusinessCopy.pickupStart}: '
-              '${formatPickupTime(draft.pickupStartsAt)}',
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(PanganKitaSpacing.md),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '${BusinessCopy.pickupStart}: '
+                      '${formatPickupTime(draft.pickupStartsAt)}',
+                    ),
+                    Text(
+                      '${BusinessCopy.pickupDeadline}: '
+                      '${formatPickupTime(draft.pickupDeadline)}',
+                    ),
+                    const Divider(),
+                    Text(
+                      '${BusinessCopy.condition}: ${draft.condition.trim()}',
+                    ),
+                    if (storage.isNotEmpty)
+                      Text('${BusinessCopy.storage}: $storage'),
+                    if (allergens.isNotEmpty)
+                      Text('${BusinessCopy.allergens}: $allergens'),
+                  ],
+                ),
+              ),
             ),
-            Text(
-              '${BusinessCopy.pickupDeadline}: '
-              '${formatPickupTime(draft.pickupDeadline)}',
-            ),
-            Text('${BusinessCopy.condition}: ${draft.condition.trim()}'),
-            if (storage.isNotEmpty) Text('${BusinessCopy.storage}: $storage'),
-            if (allergens.isNotEmpty)
-              Text('${BusinessCopy.allergens}: $allergens'),
             if (_error case final message?) ...[
               const SizedBox(height: PanganKitaSpacing.sm),
               Text(
@@ -139,9 +180,10 @@ class _ListingPreviewPageState extends State<ListingPreviewPage> {
               child: const Text(BusinessCopy.saveDraft),
             ),
             const SizedBox(height: PanganKitaSpacing.md),
-            ElevatedButton(
+            ElevatedButton.icon(
               onPressed: _saving ? null : () => unawaited(_save(publish: true)),
-              child: Text(_saving ? BusinessCopy.saving : BusinessCopy.publish),
+              icon: const Icon(Symbols.publish),
+              label: Text(_saving ? BusinessCopy.saving : BusinessCopy.publish),
             ),
             const SizedBox(height: PanganKitaSpacing.sm),
           ],
