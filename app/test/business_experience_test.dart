@@ -33,13 +33,22 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Mode Bisnis'));
+    await _switchRole(tester, 'Mode Bisnis');
+    await tester.ensureVisible(find.text(BusinessCopy.createListing));
     await tester.pumpAndSettle();
     expect(
       find.text(MockListingRepository.prototypeMerchant.name),
       findsOneWidget,
     );
     expect(find.text('1 listing aktif'), findsOneWidget);
+    await tester.scrollUntilVisible(find.text('Listing Aktif Toko'), 180);
+    await tester.scrollUntilVisible(
+      find.text(BusinessCopy.emptyCompleted),
+      180,
+    );
+    expect(find.text(BusinessCopy.emptyCompleted), findsOneWidget);
+    await tester.ensureVisible(find.text(BusinessCopy.createListing));
+    await tester.pumpAndSettle();
     await tester.tap(find.text(BusinessCopy.createListing));
     await tester.pumpAndSettle();
 
@@ -72,7 +81,7 @@ void main() {
     expect(find.text(BusinessCopy.fieldRequired), findsNothing);
     expect(find.text(BusinessCopy.invalidNumber), findsNothing);
     expect(find.text(BusinessCopy.invalidTime), findsNothing);
-    expect(find.text(BusinessCopy.previewTitle), findsOneWidget);
+    expect(find.text(BusinessCopy.previewTitle), findsWidgets);
     expect(find.text('Paket roti sore'), findsOneWidget);
     expect(find.text('Rp 15.000'), findsOneWidget);
     await tester.scrollUntilVisible(find.text(BusinessCopy.publish), 160);
@@ -89,8 +98,7 @@ void main() {
           .status,
       ListingStatus.active,
     );
-    await tester.tap(find.text('Mode Konsumen'));
-    await tester.pumpAndSettle();
+    await _switchRole(tester, 'Mode Konsumen');
     expect(find.text('Paket roti sore'), findsOneWidget);
 
     await tester.ensureVisible(find.text('Paket roti sore'));
@@ -105,8 +113,7 @@ void main() {
 
     await tester.pageBack();
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Mode Bisnis'));
-    await tester.pumpAndSettle();
+    await _switchRole(tester, 'Mode Bisnis');
     await tester.tap(find.text('Reservasi'));
     await tester.pumpAndSettle();
     expect(find.text('Paket roti sore'), findsOneWidget);
@@ -115,7 +122,7 @@ void main() {
     await tester.tap(find.text(BusinessCopy.markReady));
     await tester.pumpAndSettle();
     await tester.enterText(find.byType(TextField), 'PK-0001');
-    await tester.tap(find.text(BusinessCopy.verifyPickup));
+    await tester.tap(find.byKey(const Key('verify-pickup')));
     await tester.pumpAndSettle();
     expect(find.text('Selesai'), findsOneWidget);
 
@@ -125,8 +132,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('1 reservasi selesai'), findsOneWidget);
     expect(find.text('1 paket pickup selesai'), findsOneWidget);
-    await tester.tap(find.text('Mode Konsumen'));
-    await tester.pumpAndSettle();
+    await _switchRole(tester, 'Mode Konsumen');
     await tester.tap(find.text('Reservasi'));
     await tester.pumpAndSettle();
     expect(find.text('Paket roti sore'), findsOneWidget);
@@ -155,8 +161,7 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Mode Bisnis'));
-    await tester.pumpAndSettle();
+    await _switchRole(tester, 'Mode Bisnis');
     await tester.tap(find.text(BusinessCopy.createListing));
     await tester.pumpAndSettle();
     final previewButton = find.widgetWithText(
@@ -193,31 +198,41 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Mode Bisnis'));
+    await _switchRole(tester, 'Mode Bisnis');
+    await tester.ensureVisible(find.text('Paket pastry pilihan'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Paket pastry pilihan'));
     await tester.pumpAndSettle();
-    await tester.scrollUntilVisible(
-      find.text(BusinessCopy.updateQuantity),
-      160,
-    );
-    await tester.ensureVisible(find.text(BusinessCopy.updateQuantity));
-    await tester.tap(find.text(BusinessCopy.updateQuantity));
+    final updateButton = find.byKey(const Key('update-listing-quantity'));
+    await tester.scrollUntilVisible(updateButton, 240);
+    await tester.drag(find.byType(ListView).last, const Offset(0, -120));
+    await tester.pumpAndSettle();
+    await tester.tap(updateButton);
     await tester.pumpAndSettle();
     await tester.enterText(find.byType(TextField), '4');
     await tester.tap(find.text(BusinessCopy.updateQuantity).last);
     await tester.pumpAndSettle();
     expect(find.text('${BusinessCopy.availableQuantity}: 4'), findsOneWidget);
 
-    await tester.tap(find.text(BusinessCopy.closeListing));
+    final closeButton = find.byKey(const Key('close-listing'));
+    await tester.ensureVisible(closeButton);
     await tester.pumpAndSettle();
-    await tester.tap(find.text(BusinessCopy.closeListing).last);
+    await tester.tap(closeButton);
     await tester.pumpAndSettle();
-    expect(find.text('Ditutup'), findsOneWidget);
+    await tester.tap(
+      find.descendant(
+        of: find.byType(AlertDialog),
+        matching: find.text(BusinessCopy.closeListing),
+      ),
+    );
+    await tester.pumpAndSettle();
     expect(
       (await listings.getListing('sample-bread'))?.status,
       ListingStatus.cancelled,
     );
+    await tester.drag(find.byType(ListView).last, const Offset(0, 1000));
+    await tester.pumpAndSettle();
+    expect(find.text('Ditutup'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
@@ -265,4 +280,11 @@ void main() {
     expect(tester.getTopLeft(publish).dy - tester.getBottomLeft(save).dy, 16);
     expect(tester.takeException(), isNull);
   });
+}
+
+Future<void> _switchRole(WidgetTester tester, String label) async {
+  await tester.tap(find.byTooltip(label));
+  await tester.pumpAndSettle();
+  await tester.tap(find.text(label));
+  await tester.pumpAndSettle();
 }

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:pangankita/app/pangan_kita_theme.dart';
 import 'package:pangankita/features/discovery/domain/listing.dart';
 import 'package:pangankita/features/discovery/presentation/discovery_format.dart';
@@ -71,7 +72,14 @@ class _ReservationConfirmationPageState
   Widget build(BuildContext context) {
     final listing = widget.listing;
     return Scaffold(
-      appBar: AppBar(title: const Text(ReservationCopy.confirmationTitle)),
+      appBar: AppBar(
+        leading: IconButton(
+          tooltip: 'Back',
+          onPressed: () => Navigator.of(context).pop(),
+          icon: const Icon(Symbols.arrow_back),
+        ),
+        title: const Text(ReservationCopy.confirmationTitle),
+      ),
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.all(PanganKitaSpacing.md),
@@ -106,9 +114,10 @@ class _ReservationConfirmationPageState
           padding: const EdgeInsets.all(PanganKitaSpacing.md),
           child: SizedBox(
             width: double.infinity,
-            child: ElevatedButton(
+            child: ElevatedButton.icon(
               onPressed: _saving ? null : () => unawaited(_confirm()),
-              child: Text(
+              icon: const Icon(Symbols.check),
+              label: Text(
                 _saving ? ReservationCopy.saving : ReservationCopy.confirm,
               ),
             ),
@@ -143,7 +152,7 @@ class _QuantitySelector extends StatelessWidget {
           IconButton(
             onPressed: quantity > 1 ? () => onChanged(quantity - 1) : null,
             tooltip: ReservationCopy.decreaseQuantity,
-            icon: const Icon(Icons.remove_circle_outline),
+            icon: const Icon(Symbols.remove),
           ),
           Text('$quantity'),
           IconButton(
@@ -151,7 +160,7 @@ class _QuantitySelector extends StatelessWidget {
                 ? () => onChanged(quantity + 1)
                 : null,
             tooltip: ReservationCopy.increaseQuantity,
-            icon: const Icon(Icons.add_circle_outline),
+            icon: const Icon(Symbols.add),
           ),
           Flexible(
             child: Text(

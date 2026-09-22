@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:pangankita/app/pangan_kita_theme.dart';
 import 'package:pangankita/features/business/presentation/business_copy.dart';
 import 'package:pangankita/features/discovery/domain/listing.dart';
@@ -262,32 +263,91 @@ class _ListingDetailsBody extends StatelessWidget {
       child: ListView(
         padding: const EdgeInsets.all(PanganKitaSpacing.md),
         children: [
-          Text(
-            BusinessCopy.listingStatus(listing.status),
-            style: Theme.of(context).textTheme.headlineSmall,
+          Wrap(
+            spacing: PanganKitaSpacing.sm,
+            runSpacing: PanganKitaSpacing.md,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              Chip(label: Text(BusinessCopy.listingStatus(listing.status))),
+              Text(
+                listing.name,
+                style: Theme.of(context).textTheme.headlineMedium,
+              ),
+            ],
           ),
-          Text(listing.name, style: Theme.of(context).textTheme.headlineMedium),
+          const SizedBox(height: PanganKitaSpacing.md),
+          ClipRRect(
+            borderRadius: const BorderRadius.all(
+              Radius.circular(PanganKitaRadii.card),
+            ),
+            child: Image.asset(
+              listing.content.imageAsset,
+              height: _imageHeight,
+              fit: BoxFit.cover,
+            ),
+          ),
+          const SizedBox(height: PanganKitaSpacing.md),
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(PanganKitaSpacing.md),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(listing.content.description),
+                  Text(
+                    formatRupiah(listing.offer.priceRupiah),
+                    style: Theme.of(context).textTheme.headlineSmall
+                        ?.copyWith(color: PanganKitaColors.brandPrimaryStrong),
+                  ),
+                  Text(
+                    '${BusinessCopy.pickupDeadline}: '
+                    '${formatPickupTime(listing.offer.pickupDeadline)}',
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: PanganKitaSpacing.md),
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(PanganKitaSpacing.md),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Status batch surplus',
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                  const SizedBox(height: PanganKitaSpacing.sm),
+                  LinearProgressIndicator(
+                    value: listing.offer.totalQuantity == 0
+                        ? 0
+                        : completed / listing.offer.totalQuantity,
+                    backgroundColor: PanganKitaColors.borderNeutral,
+                  ),
+                  const SizedBox(height: PanganKitaSpacing.sm),
+                  Wrap(
+                    spacing: PanganKitaSpacing.md,
+                    runSpacing: PanganKitaSpacing.sm,
+                    children: [
+                      Text(
+                        '${BusinessCopy.totalQuantity}: '
+                        '${listing.offer.totalQuantity}',
+                      ),
+                      Text(
+                        '${BusinessCopy.availableQuantity}: '
+                        '${listing.offer.availableQuantity}',
+                      ),
+                      Text('${BusinessCopy.reservedQuantity}: $active'),
+                      Text('${BusinessCopy.completedQuantity}: $completed'),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: PanganKitaSpacing.sm),
           const Text(BusinessCopy.demoNotice),
-          const SizedBox(height: PanganKitaSpacing.md),
-          Image.asset(
-            listing.content.imageAsset,
-            height: _imageHeight,
-            fit: BoxFit.cover,
-          ),
-          Text(listing.content.description),
-          Text(formatRupiah(listing.offer.priceRupiah)),
-          Text(
-            '${BusinessCopy.pickupDeadline}: '
-            '${formatPickupTime(listing.offer.pickupDeadline)}',
-          ),
-          const SizedBox(height: PanganKitaSpacing.md),
-          Text('${BusinessCopy.totalQuantity}: ${listing.offer.totalQuantity}'),
-          Text(
-            '${BusinessCopy.availableQuantity}: '
-            '${listing.offer.availableQuantity}',
-          ),
-          Text('${BusinessCopy.reservedQuantity}: $active'),
-          Text('${BusinessCopy.completedQuantity}: $completed'),
           if (error case final message?) ...[
             const SizedBox(height: PanganKitaSpacing.sm),
             Text(
@@ -298,17 +358,22 @@ class _ListingDetailsBody extends StatelessWidget {
           if (editable) ...[
             const SizedBox(height: PanganKitaSpacing.lg),
             if (listing.status == ListingStatus.draft)
-              ElevatedButton(
+              ElevatedButton.icon(
                 onPressed: saving ? null : onPublish,
-                child: const Text(BusinessCopy.publish),
+                icon: const Icon(Symbols.publish),
+                label: const Text(BusinessCopy.publish),
               ),
-            OutlinedButton(
+            OutlinedButton.icon(
+              key: const Key('update-listing-quantity'),
               onPressed: saving ? null : onQuantity,
-              child: const Text(BusinessCopy.updateQuantity),
+              icon: const Icon(Symbols.tune),
+              label: const Text(BusinessCopy.updateQuantity),
             ),
-            TextButton(
+            TextButton.icon(
+              key: const Key('close-listing'),
               onPressed: saving ? null : onClose,
-              child: const Text(BusinessCopy.closeListing),
+              icon: const Icon(Symbols.close),
+              label: const Text(BusinessCopy.closeListing),
             ),
           ],
         ],

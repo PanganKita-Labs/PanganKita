@@ -71,6 +71,52 @@ abstract final class ReservationCopy {
   /// Reservation detail title.
   static const detailTitle = 'Detail pickup';
 
+  /// Heading shown after the merchant marks a package ready.
+  static const readyHeading = 'Pesanan siap diambil';
+
+  /// Heading shown while the reservation is waiting for preparation.
+  static const reservedHeading = 'Pesanan telah dipesan';
+
+  /// Ready-state supporting copy.
+  static const readySummary = 'Penjual menandai paket siap untuk diambil.';
+
+  /// Reserved-state supporting copy.
+  static const reservedSummary =
+      'Tunggu penjual menyiapkan paket sebelum pickup.';
+
+  /// Prototype pickup ticket heading.
+  static const ticketTitle = 'Tiket pickup contoh';
+
+  /// Labels the decorative QR treatment as non-secure.
+  static const qrVisual = 'Visual QR contoh; gunakan kode pickup teks';
+
+  /// Placeholder shown instead of a live map.
+  static const mapUnavailable = 'Pratinjau peta belum tersedia';
+
+  /// Reference map action retained without a live navigation provider.
+  static const openMap = 'Buka peta';
+
+  /// Reference contact action retained without merchant contact data.
+  static const contactSeller = 'Hubungi penjual';
+
+  /// Truthful response to unavailable map navigation.
+  static const mapActionUnavailable =
+      'Navigasi peta belum tersedia pada prototipe.';
+
+  /// Truthful response to unavailable direct contact.
+  static const contactUnavailable =
+      'Kontak langsung belum tersedia pada prototipe.';
+
+  /// Pickup note card heading.
+  static const pickupNoteTitle = 'Catatan pengambilan';
+
+  /// Honest support area heading.
+  static const helpTitle = 'Butuh bantuan?';
+
+  /// Explains the local prototype support boundary.
+  static const helpUnavailable =
+      'Dukungan langsung belum tersedia pada prototipe lokal.';
+
   /// Missing local reservation.
   static const missing = 'Reservasi contoh ini tidak ditemukan.';
 

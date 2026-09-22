@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:pangankita/app/pangan_kita_theme.dart';
 import 'package:pangankita/features/discovery/domain/listing.dart';
 import 'package:pangankita/features/discovery/domain/listing_repository.dart';
@@ -62,7 +63,14 @@ class _ListingDetailPageState extends State<ListingDetailPage> {
           !snapshot.hasError &&
           snapshot.connectionState != ConnectionState.done) {
         return Scaffold(
-          appBar: AppBar(title: const Text(DiscoveryCopy.detailTitle)),
+          appBar: AppBar(
+            leading: IconButton(
+              tooltip: 'Back',
+              onPressed: () => Navigator.of(context).pop(),
+              icon: const Icon(Symbols.arrow_back),
+            ),
+            title: const Text(DiscoveryCopy.detailTitle),
+          ),
           body: const _DetailState(
             message: DiscoveryCopy.detailLoading,
             loading: true,
@@ -71,7 +79,14 @@ class _ListingDetailPageState extends State<ListingDetailPage> {
       }
       if (snapshot.hasError) {
         return Scaffold(
-          appBar: AppBar(title: const Text(DiscoveryCopy.detailTitle)),
+          appBar: AppBar(
+            leading: IconButton(
+              tooltip: 'Back',
+              onPressed: () => Navigator.of(context).pop(),
+              icon: const Icon(Symbols.arrow_back),
+            ),
+            title: const Text(DiscoveryCopy.detailTitle),
+          ),
           body: _DetailState(
             message: DiscoveryCopy.detailError,
             onRetry: _retry,
@@ -81,13 +96,46 @@ class _ListingDetailPageState extends State<ListingDetailPage> {
       final listing = snapshot.data;
       if (listing == null) {
         return Scaffold(
-          appBar: AppBar(title: const Text(DiscoveryCopy.detailTitle)),
+          appBar: AppBar(
+            leading: IconButton(
+              tooltip: 'Back',
+              onPressed: () => Navigator.of(context).pop(),
+              icon: const Icon(Symbols.arrow_back),
+            ),
+            title: const Text(DiscoveryCopy.detailTitle),
+          ),
           body: const _DetailState(message: DiscoveryCopy.missingListing),
         );
       }
       return Scaffold(
-        appBar: AppBar(title: const Text(DiscoveryCopy.detailTitle)),
-        body: _DetailBody(listing: listing),
+        appBar: AppBar(
+          leading: IconButton(
+            tooltip: 'Back',
+            onPressed: () => Navigator.of(context).pop(),
+            icon: const Icon(Symbols.arrow_back),
+          ),
+          title: const Text(DiscoveryCopy.detailTitle),
+          actions: [
+            IconButton(
+              tooltip: DiscoveryCopy.saveListing,
+              onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text(DiscoveryCopy.saveUnavailable)),
+              ),
+              icon: const Icon(Symbols.bookmark),
+            ),
+            const Padding(
+              padding: EdgeInsets.only(right: PanganKitaSpacing.sm),
+              child: CircleAvatar(
+                backgroundColor: PanganKitaColors.brandPrimary,
+                child: Icon(Symbols.person, color: Colors.white, fill: 1),
+              ),
+            ),
+          ],
+        ),
+        body: _DetailBody(
+          listing: listing,
+          referenceTime: widget.referenceTime,
+        ),
         bottomNavigationBar: _ReservationBoundary(
           listing: listing,
           referenceTime: widget.referenceTime,
@@ -99,20 +147,54 @@ class _ListingDetailPageState extends State<ListingDetailPage> {
 }
 
 class _DetailBody extends StatelessWidget {
-  const new({required this.listing});
+  const new({required this.listing, required this.referenceTime});
 
   final Listing listing;
-  static const _heroHeight = 220.0;
+  final DateTime referenceTime;
+  static const _heroHeight = 280.0;
+  static const double _heroHorizontalInset = PanganKitaSpacing.md;
 
   @override
   Widget build(BuildContext context) => ListView(
     children: [
-      Image.asset(
-        listing.content.imageAsset,
-        width: double.infinity,
+      SizedBox(
         height: _heroHeight,
-        fit: BoxFit.cover,
-        semanticLabel: DiscoveryCopy.photoOf(listing.name),
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            Image.asset(
+              listing.content.imageAsset,
+              fit: BoxFit.cover,
+              semanticLabel: DiscoveryCopy.photoOf(listing.name),
+            ),
+            Positioned(
+              top: PanganKitaSpacing.md,
+              left: _heroHorizontalInset,
+              child: Chip(
+                avatar: const Icon(Symbols.eco, size: 18, fill: 1),
+                label: Text(
+                  DiscoveryCopy.savings(listing.offer.savingsPercent),
+                ),
+                backgroundColor: PanganKitaColors.savingsSurface,
+              ),
+            ),
+            Positioned(
+              top: PanganKitaSpacing.md,
+              right: _heroHorizontalInset,
+              child: Chip(
+                avatar: const Icon(
+                  Symbols.local_fire_department,
+                  size: 18,
+                  color: PanganKitaColors.brandAccent,
+                  fill: 1,
+                ),
+                label: Text(
+                  DiscoveryCopy.available(listing.offer.availableQuantity),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
       Padding(
         padding: const EdgeInsets.all(PanganKitaSpacing.md),
@@ -124,19 +206,11 @@ class _DetailBody extends StatelessWidget {
               style: Theme.of(context).textTheme.bodySmall,
             ),
             const SizedBox(height: PanganKitaSpacing.md),
-            Text(
-              listing.name,
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-            const SizedBox(height: PanganKitaSpacing.sm),
-            Text(
-              listing.content.description,
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-            const SizedBox(height: PanganKitaSpacing.md),
             _ListingOverview(listing: listing),
             const SizedBox(height: PanganKitaSpacing.md),
-            _PickupInformation(listing: listing),
+            _FoodSummary(listing: listing),
+            const SizedBox(height: PanganKitaSpacing.md),
+            _PickupInformation(listing: listing, referenceTime: referenceTime),
             const SizedBox(height: PanganKitaSpacing.md),
             _SellerInformation(info: listing.content.sellerInfo),
             const SizedBox(height: PanganKitaSpacing.md),
@@ -161,15 +235,51 @@ class _ListingOverview extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            listing.merchant.name,
-            style: Theme.of(context).textTheme.titleMedium,
+          Row(
+            children: [
+              const CircleAvatar(child: Icon(Symbols.storefront)),
+              const SizedBox(width: PanganKitaSpacing.sm),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      listing.merchant.name,
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    Text(
+                      '${listing.merchant.area} · '
+                      '${formatDistance(listing.merchant.distanceMeters)}',
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                  ],
+                ),
+              ),
+              const Icon(Symbols.near_me, color: PanganKitaColors.brandPrimary),
+            ],
           ),
-          Text(
-            '${listing.merchant.area} · '
-            '${formatDistance(listing.merchant.distanceMeters)}',
-            style: Theme.of(context).textTheme.bodyMedium,
-          ),
+        ],
+      ),
+    ),
+  );
+}
+
+class _FoodSummary extends StatelessWidget {
+  const new({required this.listing});
+
+  final Listing listing;
+
+  @override
+  Widget build(BuildContext context) => Card(
+    margin: EdgeInsets.zero,
+    child: Padding(
+      padding: const EdgeInsets.all(PanganKitaSpacing.md),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(listing.name, style: Theme.of(context).textTheme.headlineMedium),
+          const SizedBox(height: PanganKitaSpacing.sm),
+          Text(listing.content.description),
           const SizedBox(height: PanganKitaSpacing.md),
           Wrap(
             spacing: PanganKitaSpacing.sm,
@@ -178,18 +288,20 @@ class _ListingOverview extends StatelessWidget {
             children: [
               Text(
                 formatRupiah(listing.offer.priceRupiah),
-                style: Theme.of(context).textTheme.headlineMedium
-                    ?.copyWith(color: PanganKitaColors.brandPrimary),
+                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                  color: PanganKitaColors.brandPrimary,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
               Text(
                 formatRupiah(listing.offer.originalPriceRupiah),
                 style: Theme.of(context).textTheme.bodyMedium
                     ?.copyWith(decoration: TextDecoration.lineThrough),
               ),
-              Text(
-                DiscoveryCopy.savings(listing.offer.savingsPercent),
-                style: Theme.of(context).textTheme.labelMedium
-                    ?.copyWith(color: PanganKitaColors.brandPrimaryStrong),
+              Chip(
+                label: Text(
+                  DiscoveryCopy.savings(listing.offer.savingsPercent),
+                ),
               ),
             ],
           ),
@@ -200,9 +312,10 @@ class _ListingOverview extends StatelessWidget {
 }
 
 class _PickupInformation extends StatelessWidget {
-  const new({required this.listing});
+  const new({required this.listing, required this.referenceTime});
 
   final Listing listing;
+  final DateTime referenceTime;
 
   @override
   Widget build(BuildContext context) => Card(
@@ -224,7 +337,11 @@ class _PickupInformation extends StatelessWidget {
           const SizedBox(height: PanganKitaSpacing.sm),
           Row(
             children: [
-              const Icon(Icons.schedule, color: PanganKitaColors.brandAccent),
+              const Icon(
+                Symbols.schedule,
+                color: PanganKitaColors.brandAccent,
+                fill: 1,
+              ),
               const SizedBox(width: PanganKitaSpacing.sm),
               Expanded(
                 child: Text(
@@ -239,6 +356,19 @@ class _PickupInformation extends StatelessWidget {
             DiscoveryCopy.available(listing.offer.availableQuantity),
             style: Theme.of(context).textTheme.labelLarge,
           ),
+          const SizedBox(height: PanganKitaSpacing.sm),
+          LinearProgressIndicator(
+            value: listing.offer.totalQuantity == 0
+                ? 0
+                : listing.offer.availableQuantity / listing.offer.totalQuantity,
+            backgroundColor: PanganKitaColors.borderNeutral,
+          ),
+          const SizedBox(height: PanganKitaSpacing.sm),
+          Text(
+            formatRemainingTime(listing.offer.pickupDeadline, referenceTime),
+          ),
+          const SizedBox(height: PanganKitaSpacing.sm),
+          const Text(DiscoveryCopy.pickupDeadlineNotice),
         ],
       ),
     ),
@@ -258,9 +388,17 @@ class _SellerInformation extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            DiscoveryCopy.sellerInformation,
-            style: Theme.of(context).textTheme.titleMedium,
+          Row(
+            children: [
+              const Icon(Symbols.info, color: PanganKitaColors.brandPrimary),
+              const SizedBox(width: PanganKitaSpacing.sm),
+              Expanded(
+                child: Text(
+                  DiscoveryCopy.sellerInformation,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+              ),
+            ],
           ),
           Text(
             DiscoveryCopy.sellerDisclaimer,
@@ -268,14 +406,32 @@ class _SellerInformation extends StatelessWidget {
           ),
           const SizedBox(height: PanganKitaSpacing.sm),
           _SellerFact(
+            icon: Symbols.inventory_2,
             label: DiscoveryCopy.surplusReason,
             value: info.surplusReason,
           ),
-          _SellerFact(label: DiscoveryCopy.condition, value: info.condition),
+          _SellerFact(
+            icon: Symbols.task_alt,
+            label: DiscoveryCopy.condition,
+            value: info.condition,
+          ),
           if (info.storage case final storage?)
-            _SellerFact(label: DiscoveryCopy.storage, value: storage),
+            _SellerFact(
+              icon: Symbols.restaurant,
+              label: DiscoveryCopy.storage,
+              value: storage,
+            ),
           if (info.allergens case final allergens?)
-            _SellerFact(label: DiscoveryCopy.allergens, value: allergens),
+            _SellerFact(
+              icon: Symbols.warning,
+              label: DiscoveryCopy.allergens,
+              value: allergens,
+            ),
+          const _SellerFact(
+            icon: Symbols.assignment,
+            label: DiscoveryCopy.sellerDeclaration,
+            value: DiscoveryCopy.sellerDisclaimer,
+          ),
         ],
       ),
     ),
@@ -283,8 +439,11 @@ class _SellerInformation extends StatelessWidget {
 }
 
 class _SellerFact extends StatelessWidget {
-  const new({required this.label, required this.value});
+  const new({required this.icon, required this.label, required this.value});
 
+  static const _iconSize = 16.0;
+
+  final IconData icon;
   final String label;
   final String value;
 
@@ -294,8 +453,32 @@ class _SellerFact extends StatelessWidget {
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: Theme.of(context).textTheme.labelLarge),
-        Text(value, style: Theme.of(context).textTheme.bodyMedium),
+        Card(
+          color: PanganKitaColors.surfaceWarm,
+          margin: EdgeInsets.zero,
+          child: Padding(
+            padding: const EdgeInsets.all(PanganKitaSpacing.md),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(icon, size: _iconSize),
+                    const SizedBox(width: PanganKitaSpacing.sm),
+                    Expanded(
+                      child: Text(
+                        label,
+                        style: Theme.of(context).textTheme.labelLarge,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: PanganKitaSpacing.sm),
+                Text(value, style: Theme.of(context).textTheme.bodyMedium),
+              ],
+            ),
+          ),
+        ),
       ],
     ),
   );
@@ -303,6 +486,8 @@ class _SellerFact extends StatelessWidget {
 
 class _PickupLocation extends StatelessWidget {
   const new({required this.merchant});
+
+  static const _mapPlaceholderHeight = 132.0;
 
   final ListingMerchant merchant;
 
@@ -314,12 +499,64 @@ class _PickupLocation extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            DiscoveryCopy.pickupLocation,
-            style: Theme.of(context).textTheme.titleMedium,
+          Row(
+            children: [
+              const Icon(
+                Symbols.pin_drop,
+                color: PanganKitaColors.brandPrimary,
+              ),
+              const SizedBox(width: PanganKitaSpacing.sm),
+              Text(
+                DiscoveryCopy.pickupLocation,
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+            ],
           ),
           const SizedBox(height: PanganKitaSpacing.sm),
           Text(merchant.pickupAddress),
+          const SizedBox(height: PanganKitaSpacing.md),
+          Container(
+            height: _mapPlaceholderHeight,
+            alignment: Alignment.center,
+            decoration: const BoxDecoration(
+              color: PanganKitaColors.borderNeutral,
+              borderRadius: BorderRadius.all(
+                Radius.circular(PanganKitaRadii.control),
+              ),
+            ),
+            child: const Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Symbols.store, color: PanganKitaColors.brandPrimary),
+                SizedBox(height: PanganKitaSpacing.xs),
+                Text(DiscoveryCopy.mapPlaceholder),
+              ],
+            ),
+          ),
+          const SizedBox(height: PanganKitaSpacing.sm),
+          OutlinedButton.icon(
+            onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text(DiscoveryCopy.mapActionUnavailable)),
+            ),
+            icon: const Icon(Symbols.near_me),
+            label: const Text(DiscoveryCopy.pickupLocation),
+          ),
+          const SizedBox(height: PanganKitaSpacing.sm),
+          const Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Icon(Symbols.shopping_bag, color: PanganKitaColors.brandPrimary),
+              SizedBox(width: PanganKitaSpacing.sm),
+              Expanded(child: Text(DiscoveryCopy.pickupGuidance)),
+            ],
+          ),
+          TextButton.icon(
+            onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text(DiscoveryCopy.reportUnavailable)),
+            ),
+            icon: const Icon(Symbols.flag),
+            label: const Text(DiscoveryCopy.reportListing),
+          ),
         ],
       ),
     ),
@@ -349,19 +586,44 @@ class _ReservationBoundary extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            ElevatedButton(
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(DiscoveryCopy.totalPayment),
+                  Text(
+                    formatRupiah(listing.offer.priceRupiah),
+                    style: Theme.of(context).textTheme.headlineSmall
+                        ?.copyWith(color: PanganKitaColors.brandPrimary),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: PanganKitaSpacing.sm),
+            ElevatedButton.icon(
               onPressed: available ? () => onReserve(listing) : null,
-              child: Text(
+              icon: const Icon(Symbols.lock),
+              label: Text(
                 available
                     ? DiscoveryCopy.continueToReservation
                     : DiscoveryCopy.unavailable,
               ),
             ),
             const SizedBox(height: PanganKitaSpacing.sm),
-            Text(
-              DiscoveryCopy.payAtPickup,
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodySmall,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Symbols.shield, size: 16),
+                const SizedBox(width: PanganKitaSpacing.xs),
+                Flexible(
+                  child: Text(
+                    DiscoveryCopy.payAtPickup,
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ),
+              ],
             ),
           ],
         ),

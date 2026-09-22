@@ -58,14 +58,41 @@ abstract final class PanganKitaTheme {
       backgroundColor: PanganKitaColors.surfaceWarm,
       foregroundColor: PanganKitaColors.textPrimary,
       centerTitle: false,
+      elevation: 0,
+      scrolledUnderElevation: 0,
+      surfaceTintColor: Colors.transparent,
+    ),
+    inputDecorationTheme: const InputDecorationTheme(
+      filled: true,
+      fillColor: Colors.white,
+      contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.all(
+          Radius.circular(PanganKitaRadii.control),
+        ),
+        borderSide: BorderSide(color: PanganKitaColors.borderNeutral),
+      ),
     ),
     navigationBarTheme: NavigationBarThemeData(
-      indicatorColor: PanganKitaColors.brandPrimary,
+      backgroundColor: Colors.white,
+      indicatorColor: Colors.transparent,
       iconTheme: WidgetStateProperty.resolveWith(
         (states) => IconThemeData(
           color: states.contains(WidgetState.selected)
-              ? Colors.white
+              ? PanganKitaColors.brandPrimary
               : PanganKitaColors.textPrimary,
+          fill: states.contains(WidgetState.selected) ? 1 : 0,
+          weight: states.contains(WidgetState.selected) ? 600 : 400,
+        ),
+      ),
+      labelTextStyle: WidgetStateProperty.resolveWith(
+        (states) => TextStyle(
+          color: states.contains(WidgetState.selected)
+              ? PanganKitaColors.brandPrimary
+              : PanganKitaColors.textPrimary,
+          fontWeight: states.contains(WidgetState.selected)
+              ? FontWeight.w700
+              : FontWeight.w500,
         ),
       ),
     ),
@@ -118,11 +145,20 @@ abstract final class PanganKitaColors {
   /// Warm page background.
   static const surfaceWarm = Color(0xFFFAF6F0);
 
+  /// Slightly darker warm surface used for contextual panels.
+  static const surfaceContainerLow = Color(0xFFF7F3ED);
+
   /// Primary text color.
   static const textPrimary = Color(0xFF2D2D2D);
 
   /// Subtle border color.
   static const borderNeutral = Color(0xFFE8E4DF);
+
+  /// Soft badge behind calculated savings.
+  static const savingsSurface = Color(0xFFE8F5E9);
+
+  /// Soft badge behind local stock remaining.
+  static const urgencySurface = Color(0xFFFFEBD5);
 
   /// Error and destructive action color.
   static const danger = Color(0xFFD32F2F);
@@ -130,6 +166,9 @@ abstract final class PanganKitaColors {
 
 /// Common layout measurements.
 abstract final class PanganKitaSpacing {
+  /// Extra-small spacing for compact badges.
+  static const xs = 4.0;
+
   /// Small spacing.
   static const sm = 8.0;
 

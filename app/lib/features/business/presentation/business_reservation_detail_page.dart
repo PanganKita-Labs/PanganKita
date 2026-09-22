@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:pangankita/app/pangan_kita_theme.dart';
 import 'package:pangankita/features/business/presentation/business_copy.dart';
 import 'package:pangankita/features/discovery/presentation/discovery_format.dart';
@@ -95,7 +96,14 @@ class _BusinessReservationDetailPageState
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text(BusinessCopy.reservationTitle)),
+    appBar: AppBar(
+      leading: IconButton(
+        tooltip: 'Back',
+        onPressed: () => Navigator.of(context).pop(),
+        icon: const Icon(Symbols.arrow_back),
+      ),
+      title: const Text(BusinessCopy.reservationTitle),
+    ),
     body: FutureBuilder<Reservation?>(
       future: _future,
       builder: (context, snapshot) {
@@ -179,29 +187,71 @@ class _ReservationDetails extends StatelessWidget {
       child: ListView(
         padding: const EdgeInsets.all(PanganKitaSpacing.md),
         children: [
-          Text(
-            ReservationCopy.status(reservation.status),
-            style: Theme.of(context).textTheme.headlineMedium,
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(PanganKitaSpacing.md),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Chip(label: Text(ReservationCopy.status(reservation.status))),
+                  Text(
+                    listing.name,
+                    style: Theme.of(context).textTheme.headlineSmall,
+                  ),
+                  Text('ID ${reservation.id} · ${reservation.quantity} paket'),
+                  const SizedBox(height: PanganKitaSpacing.sm),
+                  Text(
+                    '${ReservationCopy.pickupBefore} '
+                    '${formatPickupTime(listing.offer.pickupDeadline)}',
+                  ),
+                ],
+              ),
+            ),
           ),
-          const Text(BusinessCopy.demoNotice),
           const SizedBox(height: PanganKitaSpacing.md),
-          Text(
-            '${ReservationCopy.pickupBefore} '
-            '${formatPickupTime(listing.offer.pickupDeadline)}',
-            style: Theme.of(context).textTheme.titleLarge,
+          Card(
+            child: ListTile(
+              leading: const Icon(Symbols.payments),
+              title: Text(formatRupiah(reservation.amountDueRupiah)),
+              subtitle: const Text(ReservationCopy.payment),
+            ),
           ),
-          Text(listing.name, style: Theme.of(context).textTheme.headlineSmall),
-          Text('${reservation.quantity} paket · ${reservation.id}'),
-          Text(listing.merchant.name),
-          Text(listing.merchant.pickupAddress),
           const SizedBox(height: PanganKitaSpacing.md),
-          Text(
-            '${ReservationCopy.amountDue}: '
-            '${formatRupiah(reservation.amountDueRupiah)}',
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(PanganKitaSpacing.md),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    BusinessCopy.verifyPickup,
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                  const Text(BusinessCopy.codeNotice),
+                  if (reservation.status ==
+                      ReservationStatus.readyForPickup) ...[
+                    const SizedBox(height: PanganKitaSpacing.md),
+                    TextField(
+                      controller: code,
+                      decoration: const InputDecoration(
+                        labelText: BusinessCopy.pickupCode,
+                        prefixIcon: Icon(Symbols.qr_code_scanner),
+                      ),
+                      textCapitalization: TextCapitalization.characters,
+                      autocorrect: false,
+                    ),
+                    const SizedBox(height: PanganKitaSpacing.md),
+                    ElevatedButton.icon(
+                      key: const Key('verify-pickup'),
+                      onPressed: saving ? null : onVerify,
+                      icon: const Icon(Symbols.check),
+                      label: const Text(BusinessCopy.verifyPickup),
+                    ),
+                  ],
+                ],
+              ),
+            ),
           ),
-          const Text(ReservationCopy.payment),
-          const SizedBox(height: PanganKitaSpacing.md),
-          const Text(BusinessCopy.codeNotice),
           if (error case final message?) ...[
             const SizedBox(height: PanganKitaSpacing.sm),
             Text(
@@ -211,26 +261,14 @@ class _ReservationDetails extends StatelessWidget {
           ],
           if (reservation.status == ReservationStatus.reserved) ...[
             const SizedBox(height: PanganKitaSpacing.lg),
-            ElevatedButton(
+            ElevatedButton.icon(
               onPressed: saving ? null : onReady,
-              child: const Text(BusinessCopy.markReady),
+              icon: const Icon(Symbols.verified),
+              label: const Text(BusinessCopy.markReady),
             ),
           ],
-          if (reservation.status == ReservationStatus.readyForPickup) ...[
-            TextField(
-              controller: code,
-              decoration: const InputDecoration(
-                labelText: BusinessCopy.pickupCode,
-              ),
-              textCapitalization: TextCapitalization.characters,
-              autocorrect: false,
-            ),
-            const SizedBox(height: PanganKitaSpacing.md),
-            ElevatedButton(
-              onPressed: saving ? null : onVerify,
-              child: const Text(BusinessCopy.verifyPickup),
-            ),
-          ],
+          const SizedBox(height: PanganKitaSpacing.sm),
+          const Text(BusinessCopy.demoNotice, textAlign: TextAlign.center),
         ],
       ),
     );

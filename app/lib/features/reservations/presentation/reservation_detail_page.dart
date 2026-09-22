@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:pangankita/app/pangan_kita_theme.dart';
 import 'package:pangankita/features/discovery/presentation/discovery_format.dart';
 import 'package:pangankita/features/reservations/domain/reservation.dart';
@@ -14,6 +15,7 @@ class ReservationDetailPage extends StatefulWidget {
     required this.reservationId,
     required this.reservations,
     required this.onChanged,
+    required this.now,
     super.key,
   });
 
@@ -25,6 +27,9 @@ class ReservationDetailPage extends StatefulWidget {
 
   /// Notifies the application shell to refresh discovery availability.
   final VoidCallback onChanged;
+
+  /// Shared prototype clock for the remaining-time display.
+  final DateTime Function() now;
 
   @override
   State<ReservationDetailPage> createState() => _ReservationDetailPageState();
@@ -85,6 +90,7 @@ class _ReservationDetailPageState extends State<ReservationDetailPage> {
     final approved = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
+        icon: const Icon(Symbols.warning, color: PanganKitaColors.brandAccent),
         title: const Text(ReservationCopy.cancelQuestion),
         content: const Text(ReservationCopy.cancelExplanation),
         actions: [
@@ -106,7 +112,23 @@ class _ReservationDetailPageState extends State<ReservationDetailPage> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text(ReservationCopy.detailTitle)),
+    appBar: AppBar(
+      leading: IconButton(
+        tooltip: 'Back',
+        onPressed: () => Navigator.of(context).pop(),
+        icon: const Icon(Symbols.arrow_back),
+      ),
+      title: const Text(ReservationCopy.detailTitle),
+      actions: const [
+        Padding(
+          padding: EdgeInsets.only(right: PanganKitaSpacing.sm),
+          child: CircleAvatar(
+            backgroundColor: PanganKitaColors.brandPrimary,
+            child: Icon(Symbols.person, color: Colors.white, fill: 1),
+          ),
+        ),
+      ],
+    ),
     body: FutureBuilder<Reservation?>(
       future: _future,
       builder: (context, snapshot) {
@@ -139,6 +161,7 @@ class _ReservationDetailPageState extends State<ReservationDetailPage> {
         }
         return _ReservationBody(
           reservation: reservation,
+          referenceTime: widget.now(),
           error: _error,
           saving: _saving,
           onCancel: () => unawaited(_cancel()),
@@ -151,12 +174,14 @@ class _ReservationDetailPageState extends State<ReservationDetailPage> {
 class _ReservationBody extends StatelessWidget {
   const new({
     required this.reservation,
+    required this.referenceTime,
     required this.onCancel,
     required this.saving,
     this.error,
   });
 
   final Reservation reservation;
+  final DateTime referenceTime;
   final VoidCallback onCancel;
   final String? error;
   final bool saving;
@@ -167,7 +192,10 @@ class _ReservationBody extends StatelessWidget {
       child: ListView(
         padding: const EdgeInsets.all(PanganKitaSpacing.md),
         children: [
-          _PickupInformation(reservation: reservation),
+          _PickupInformation(
+            reservation: reservation,
+            referenceTime: referenceTime,
+          ),
           if (error case final message?) ...[
             const SizedBox(height: PanganKitaSpacing.sm),
             Text(
@@ -187,79 +215,315 @@ class _ReservationBody extends StatelessWidget {
 }
 
 class _PickupInformation extends StatelessWidget {
-  const new({required this.reservation});
+  const new({required this.reservation, required this.referenceTime});
+
+  static const _ticketImageWidth = 56.0;
+  static const _pickupCodeLetterSpacing = 3.0;
+  static const _qrVisualSize = 112.0;
+  static const _mapPlaceholderHeight = 120.0;
 
   final Reservation reservation;
+  final DateTime referenceTime;
 
   @override
   Widget build(BuildContext context) {
     final listing = reservation.listing;
+    final ready = reservation.status == ReservationStatus.readyForPickup;
+    final pickupDeadline = formatPickupTime(listing.offer.pickupDeadline);
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(
-          ReservationCopy.status(reservation.status),
-          style: Theme.of(context).textTheme.headlineMedium,
-        ),
-        const Text(ReservationCopy.demoNotice),
-        const SizedBox(height: PanganKitaSpacing.md),
-        Row(
-          children: [
-            const Icon(Icons.schedule, color: PanganKitaColors.brandAccent),
-            const SizedBox(width: PanganKitaSpacing.sm),
-            Expanded(
-              child: Text(
-                '${ReservationCopy.pickupBefore} '
-                '${formatPickupTime(listing.offer.pickupDeadline)}',
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: PanganKitaSpacing.md),
-        Text(listing.name, style: Theme.of(context).textTheme.titleLarge),
-        Text(
-          ReservationCopy.packageSummary(
-            reservation.quantity,
-            listing.merchant.name,
-          ),
-        ),
-        const SizedBox(height: PanganKitaSpacing.md),
-        Text(
-          ReservationCopy.pickupPlace,
-          style: Theme.of(context).textTheme.titleMedium,
-        ),
-        Text(listing.merchant.pickupAddress),
-        const SizedBox(height: PanganKitaSpacing.md),
         Card(
           child: Padding(
             padding: const EdgeInsets.all(PanganKitaSpacing.md),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(ReservationCopy.pickupCode),
-                Text(
-                  reservation.pickupCode,
-                  style: Theme.of(context).textTheme.headlineLarge,
+                Wrap(
+                  alignment: WrapAlignment.spaceBetween,
+                  spacing: PanganKitaSpacing.sm,
+                  children: [
+                    Chip(
+                      avatar: const Icon(Symbols.circle, size: 12, fill: 1),
+                      label: Text(ReservationCopy.status(reservation.status)),
+                      backgroundColor: PanganKitaColors.savingsSurface,
+                    ),
+                    Text(
+                      'ID ${reservation.id}',
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  ],
                 ),
-                const Text(ReservationCopy.codeNotice),
+                Text(
+                  ready
+                      ? ReservationCopy.readyHeading
+                      : ReservationCopy.reservedHeading,
+                  style: Theme.of(context).textTheme.headlineSmall,
+                ),
+                const SizedBox(height: PanganKitaSpacing.sm),
+                Text(
+                  ready
+                      ? ReservationCopy.readySummary
+                      : ReservationCopy.reservedSummary,
+                ),
+                const SizedBox(height: PanganKitaSpacing.md),
+                Card(
+                  color: PanganKitaColors.surfaceWarm,
+                  child: Padding(
+                    padding: const EdgeInsets.all(PanganKitaSpacing.sm),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            const Icon(
+                              Symbols.schedule,
+                              color: PanganKitaColors.brandAccent,
+                              fill: 1,
+                            ),
+                            const SizedBox(width: PanganKitaSpacing.sm),
+                            Expanded(
+                              child: Text(
+                                '${ReservationCopy.pickupBefore} '
+                                '$pickupDeadline',
+                                style: Theme.of(context).textTheme.titleMedium,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Text(
+                          formatRemainingTime(
+                            listing.offer.pickupDeadline,
+                            referenceTime,
+                          ),
+                        ),
+                        const SizedBox(height: PanganKitaSpacing.sm),
+                        LinearProgressIndicator(
+                          value: _remainingFraction(reservation, referenceTime),
+                          backgroundColor: PanganKitaColors.borderNeutral,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
         ),
-        const SizedBox(height: PanganKitaSpacing.md),
-        Text(
-          ReservationCopy.amountDue,
-          style: Theme.of(context).textTheme.titleMedium,
+        const SizedBox(height: PanganKitaSpacing.sm),
+        Card(
+          child: Padding(
+            padding: const EdgeInsets.all(PanganKitaSpacing.md),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  ReservationCopy.ticketTitle,
+                  style: Theme.of(context).textTheme.labelLarge,
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        listing.merchant.name,
+                        style: Theme.of(context).textTheme.headlineSmall,
+                      ),
+                    ),
+                    const CircleAvatar(child: Icon(Symbols.bakery_dining)),
+                  ],
+                ),
+                const SizedBox(height: PanganKitaSpacing.md),
+                Card(
+                  color: PanganKitaColors.surfaceWarm,
+                  child: ListTile(
+                    leading: Image.asset(
+                      listing.content.imageAsset,
+                      width: _ticketImageWidth,
+                      fit: BoxFit.cover,
+                    ),
+                    title: Text(listing.name),
+                    subtitle: Text('${reservation.quantity} paket'),
+                  ),
+                ),
+                const SizedBox(height: PanganKitaSpacing.lg),
+                const Text(
+                  ReservationCopy.pickupCode,
+                  textAlign: TextAlign.center,
+                ),
+                SelectableText(
+                  reservation.pickupCode,
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                    color: PanganKitaColors.brandPrimaryStrong,
+                    letterSpacing: _pickupCodeLetterSpacing,
+                  ),
+                ),
+                const SizedBox(height: PanganKitaSpacing.sm),
+                const Icon(
+                  Symbols.qr_code_2,
+                  size: _qrVisualSize,
+                  semanticLabel: ReservationCopy.qrVisual,
+                ),
+                const Text(
+                  ReservationCopy.qrVisual,
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: PanganKitaSpacing.sm),
+                const Text(
+                  ReservationCopy.codeNotice,
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          ),
         ),
-        Text(
-          formatRupiah(reservation.amountDueRupiah),
-          style: Theme.of(context).textTheme.headlineMedium,
+        const SizedBox(height: PanganKitaSpacing.sm),
+        Card(
+          child: Padding(
+            padding: const EdgeInsets.all(PanganKitaSpacing.md),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  ReservationCopy.amountDue,
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+                Text(
+                  formatRupiah(reservation.amountDueRupiah),
+                  style: Theme.of(context).textTheme.headlineMedium
+                      ?.copyWith(color: PanganKitaColors.brandPrimaryStrong),
+                ),
+                const Divider(),
+                const Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Icon(
+                      Symbols.payments,
+                      color: PanganKitaColors.brandPrimary,
+                    ),
+                    SizedBox(width: PanganKitaSpacing.sm),
+                    Expanded(child: Text(ReservationCopy.payment)),
+                  ],
+                ),
+                const SizedBox(height: PanganKitaSpacing.sm),
+                const Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Icon(Symbols.info, color: PanganKitaColors.brandAccent),
+                    SizedBox(width: PanganKitaSpacing.sm),
+                    Expanded(child: Text(ReservationCopy.instruction)),
+                  ],
+                ),
+              ],
+            ),
+          ),
         ),
-        const Text(ReservationCopy.payment),
-        const SizedBox(height: PanganKitaSpacing.md),
-        const Text(ReservationCopy.instruction),
+        const SizedBox(height: PanganKitaSpacing.sm),
+        Card(
+          child: Padding(
+            padding: const EdgeInsets.all(PanganKitaSpacing.md),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Icon(
+                      Symbols.storefront,
+                      color: PanganKitaColors.brandPrimary,
+                    ),
+                    const SizedBox(width: PanganKitaSpacing.sm),
+                    Text(
+                      ReservationCopy.pickupPlace,
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: PanganKitaSpacing.sm),
+                Text(listing.merchant.pickupAddress),
+                const SizedBox(height: PanganKitaSpacing.md),
+                Container(
+                  height: _mapPlaceholderHeight,
+                  alignment: Alignment.center,
+                  decoration: const BoxDecoration(
+                    color: PanganKitaColors.borderNeutral,
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(PanganKitaRadii.control),
+                    ),
+                  ),
+                  child: const Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Symbols.pin_drop,
+                        color: PanganKitaColors.brandPrimary,
+                      ),
+                      SizedBox(height: PanganKitaSpacing.xs),
+                      Text(ReservationCopy.mapUnavailable),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: PanganKitaSpacing.sm),
+                Wrap(
+                  spacing: PanganKitaSpacing.sm,
+                  runSpacing: PanganKitaSpacing.xs,
+                  children: [
+                    OutlinedButton.icon(
+                      onPressed: () => ScaffoldMessenger.of(context)
+                          .showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                ReservationCopy.mapActionUnavailable,
+                              ),
+                            ),
+                          ),
+                      icon: const Icon(Symbols.directions),
+                      label: const Text(ReservationCopy.openMap),
+                    ),
+                    OutlinedButton.icon(
+                      onPressed: () => ScaffoldMessenger.of(context)
+                          .showSnackBar(
+                            const SnackBar(
+                              content: Text(ReservationCopy.contactUnavailable),
+                            ),
+                          ),
+                      icon: const Icon(Symbols.call),
+                      label: const Text(ReservationCopy.contactSeller),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: PanganKitaSpacing.sm),
+        const Card(
+          child: ListTile(
+            leading: Icon(Symbols.info),
+            title: Text(ReservationCopy.pickupNoteTitle),
+            subtitle: Text(ReservationCopy.instruction),
+          ),
+        ),
+        const Card(
+          child: ListTile(
+            leading: Icon(Symbols.help_outline),
+            title: Text(ReservationCopy.helpTitle),
+            subtitle: Text(ReservationCopy.helpUnavailable),
+          ),
+        ),
+        const SizedBox(height: PanganKitaSpacing.sm),
+        const Text(ReservationCopy.demoNotice, textAlign: TextAlign.center),
       ],
     );
+  }
+
+  double _remainingFraction(Reservation reservation, DateTime now) {
+    final window = reservation.listing.offer.pickupDeadline
+        .difference(reservation.createdAt)
+        .inSeconds;
+    if (window <= 0) return 0;
+    return (reservation.listing.offer.pickupDeadline.difference(now).inSeconds /
+            window)
+        .clamp(0, 1);
   }
 }
 
@@ -283,9 +547,11 @@ class _CancellationAction extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: PanganKitaSpacing.lg),
-        TextButton(
+        OutlinedButton.icon(
+          key: const Key('cancel-reservation'),
           onPressed: saving ? null : onCancel,
-          child: const Text(ReservationCopy.cancel),
+          icon: const Icon(Symbols.cancel),
+          label: const Text(ReservationCopy.cancel),
         ),
       ],
     );
